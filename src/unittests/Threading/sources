@@ -1,0 +1,20 @@
+
+TARGETNAME=WFx.Threading.Unittests
+TARGETTYPE=DYNLINK
+DLLDEF=
+
+#PRECOMPILED_INCLUDE=pch.h
+#PRECOMPILED_CXX=1
+
+INCLUDES= \
+    $(INCLUDES); \
+    ..; \
+
+SOURCES= \
+    WaitHandleTests.cpp \
+
+TARGETLIBS= \
+    $(TARGETLIBS) \
+    $(INTERNAL_SDK_LIB_PATH)\mincore_win8.lib \
+    $(INTERNAL_SDK_LIB_PATH)\mincore_legacy_win8.lib \
+    $(PROJECT_OBJ_ROOT)\Threading\$(O)\WFx.Threading.lib \
