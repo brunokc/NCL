@@ -21,13 +21,13 @@ interface IDataStreamReader : IUnknown
 		) = 0;
 
 	IFACEMETHOD(ReadData)(
-		_In_ uint32_t size,
+		uint32_t size,
 		_Out_writes_bytes_(size) void* data
 		) = 0;
 };
 
 HRESULT
 CreateStreamReader(
-	_In_ const std::wstring& fileName,
+	const std::wstring& fileName,
 	_COM_Outptr_ IDataStreamReader** reader
 	);

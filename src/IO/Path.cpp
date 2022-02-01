@@ -3,15 +3,15 @@
 #include "Path.h"
 #include "Win32Exception.h"
 
-using namespace WFx::IO;
+using namespace WCL::IO;
 
 std::wstring Path::Combine(
-    _In_ PCWSTR path1,
-    _In_ PCWSTR path2
+    PCWSTR path1,
+    PCWSTR path2
     )
 {
     WCHAR combinedPath[MAX_PATH + 1] = { };
-    HRESULT hr = ::PathCchCombine(combinedPath, _countof(combinedPath), path1, path2);
+    HRESULT hr = ::PathCchCombine(combinedPath, std::size(combinedPath), path1, path2);
     if (FAILED(hr))
     {
         throw Win32Exception(hr, "Failed to combine file paths");
@@ -21,8 +21,8 @@ std::wstring Path::Combine(
 }
 
 std::wstring Path::Combine(
-    _In_ const std::wstring& path1,
-    _In_ const std::wstring& path2
+    const std::wstring& path1,
+    const std::wstring& path2
     )
 {
     return Combine(path1.c_str(), path2.c_str());

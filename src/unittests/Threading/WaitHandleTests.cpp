@@ -6,16 +6,16 @@
 
 #include <Threading/Event.h>
 
-using namespace WFx::Threading;
+using namespace WCL::Threading;
 
 DWORD
 WINAPI
 ThreadProc(
-    _In_ PVOID context
+    PVOID context
     )
 {
     std::default_random_engine generator;
-    std::uniform_int_distribution<int> distribution(1, 4);
+    std::uniform_int_distribution<int> distribution{ 1, 4 };
 
     auto events = static_cast<std::vector<AutoResetEvent*>*>(context);
     for(auto event : *events)
@@ -23,7 +23,7 @@ ThreadProc(
         int sleepTime = distribution(generator);
         Sleep(sleepTime * 1000);
 
-        wprintf(L"Setting handle %#p\n", event->Get());
+        wprintf(L"Setting handle 0x%#p (sleep time: %ds)\n", event->Get(), sleepTime);
         SetEvent(event->Get());
         Sleep(10);
     }
@@ -37,11 +37,11 @@ int __cdecl main(int, wchar_t*[])
     AutoResetEvent e2;
     AutoResetEvent e3;
 
-    wprintf(L"Queueing work item...\n");
-    std::vector<AutoResetEvent*> events;// = { &e1, &e2, &e3 };
-    events.push_back(&e1);
-    events.push_back(&e2);
-    events.push_back(&e3);
+    wprintf(L"Queueing work items...\n");
+    std::vector<AutoResetEvent*> events{ &e1, &e2, &e3 };
+    //events.push_back(&e1);
+    //events.push_back(&e2);
+    //events.push_back(&e3);
     QueueUserWorkItem(ThreadProc, &events, WT_EXECUTEDEFAULT);
 
     wprintf(L"Waiting...\n");

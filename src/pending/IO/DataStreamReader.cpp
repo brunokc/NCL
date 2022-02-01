@@ -14,7 +14,7 @@ class DataStreamReader :
 {
 public:
 	HRESULT RuntimeClassInitialize(
-		_In_ const std::wstring& path
+		const std::wstring& path
 		);
 
 	//
@@ -38,7 +38,7 @@ public:
 		);
 
 	IFACEMETHOD(ReadData)(
-		_In_ uint32_t size,
+		uint32_t size,
 		_Out_writes_bytes_(size) void* data
 		);
 
@@ -47,7 +47,7 @@ private:
 };
 
 HRESULT DataStreamReader::RuntimeClassInitialize(
-	_In_ const std::wstring& path
+	const std::wstring& path
 	)
 {
 	FileHandle handle(::CreateFile(
@@ -125,7 +125,7 @@ IFACEMETHODIMP DataStreamReader::ReadUInt64(
 }
 
 IFACEMETHODIMP DataStreamReader::ReadData(
-	_In_ uint32_t size,
+	uint32_t size,
 	_Out_writes_bytes_(size) void* data
 	)
 {
@@ -140,7 +140,7 @@ IFACEMETHODIMP DataStreamReader::ReadData(
 
 HRESULT
 CreateStreamReader(
-	_In_ const std::wstring& fileName,
+	const std::wstring& fileName,
 	_COM_Outptr_ IDataStreamReader** reader
 	)
 {

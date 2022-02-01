@@ -1,15 +1,9 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-///////////////////////////////////////////////////////////////////////////////
 
 #pragma once
 
 #include "EventWaitHandle.h"
 
-namespace WFx {
-namespace Threading {
+namespace WCL::Threading {
 
 namespace Details {
 
@@ -24,32 +18,37 @@ namespace Details {
         }
 
         explicit Event(
-            _In_ PCWSTR name
+            PCWSTR name
             )
         {
             Initialize(eventType, EventInitialState::Unsignaled, name);
         }
 
         explicit Event(
-            _In_ const std::wstring& name
+            const std::wstring& name
             )
         {
             Initialize(eventType, EventInitialState::Unsignaled, name.c_str());
         }
 
         explicit Event(
-            _In_ EventInitialState initialState,
-            _In_ PCWSTR name
+            EventInitialState initialState,
+            PCWSTR name
             )
         {
             Initialize(eventType, initialState, name);
         }
 
+        // Override private operator& in unique_event
+        Event<eventType>* operator&()
+        {
+            return this;
+        }
     private:
         Event(const Event&) = delete;
     };
 
-} // namespace WFx::Threading::Details
+} // namespace WCL::Threading::Details
 
 using ManualResetEvent = Details::Event<EventType::Manual>;
 using AutoResetEvent = Details::Event<EventType::Auto>;
@@ -64,15 +63,15 @@ using AutoResetEvent = Details::Event<EventType::Auto>;
 //     }
 
 //     explicit AutoResetEvent(
-//         _In_ PCWSTR name
+//         PCWSTR name
 //         )
 //     {
 //         EventWaitHandle::Initialize(EventType::Auto, EventInitialState::Unsignaled, name);
 //     }
 
 //     explicit AutoResetEvent(
-//         _In_ EventInitialState initialState,
-//         _In_ PCWSTR name
+//         EventInitialState initialState,
+//         PCWSTR name
 //         )
 //     {
 //         EventWaitHandle::Initialize(EventType::Auto, initialState, name);
@@ -95,15 +94,15 @@ using AutoResetEvent = Details::Event<EventType::Auto>;
 //     }
 
 //     explicit AutoResetEvent(
-//         _In_ PCWSTR name
+//         PCWSTR name
 //         )
 //     {
 //         EventWaitHandle::Initialize(EventType::Auto, EventInitialState::Unsignaled, name);
 //     }
 
 //     explicit AutoResetEvent(
-//         _In_ EventInitialState initialState,
-//         _In_ PCWSTR name
+//         EventInitialState initialState,
+//         PCWSTR name
 //         )
 //     {
 //         EventWaitHandle::Initialize(EventType::Auto, initialState, name);
@@ -115,4 +114,4 @@ using AutoResetEvent = Details::Event<EventType::Auto>;
 //         ) = delete;
 // };
 
-}} // namespace WFx::Threading
+} // namespace WCL::Threading

@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace WFx {
+namespace WCL {
 
 class String
 {
@@ -21,8 +21,8 @@ public:
         return (IsNullOrEmpty(value) || Trim(value).empty());
     }
 
-    static bool EndsWith(_In_ PCWSTR str);
-    static bool StartsWith(_In_ PCWSTR str);
+    static bool EndsWith(PCWSTR str);
+    static bool StartsWith(PCWSTR str);
 
     static std::wstring Format(...);
 
@@ -40,4 +40,4 @@ public:
     static const std::wstring Empty;
 };
 
-} // namespace WFx
+} // namespace WCL

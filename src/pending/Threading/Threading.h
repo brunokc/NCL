@@ -44,9 +44,9 @@ namespace Threading
     inline
     HRESULT
     QueueWorkItem(
-        _In_ ::WorkItemPri priority,
-        _In_ HRESULT (CALLBACK *pCallback)(Args&&...),
-        _In_ Args&&... args
+        ::WorkItemPri priority,
+        HRESULT (CALLBACK *pCallback)(Args&&...),
+        Args&&... args
        )
     {
         return Details::QueueWorkItem(
@@ -59,8 +59,8 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ HRESULT (CALLBACK *pCallback)(),
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     HRESULT (CALLBACK *pCallback)(),
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //    )
     // {
     //     return Details::QueueWorkItem(
@@ -74,9 +74,9 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ HRESULT (CALLBACK *pCallback)(P1),
-    //     _In_ const P1& param1,
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     HRESULT (CALLBACK *pCallback)(P1),
+    //     const P1& param1,
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(
@@ -93,10 +93,10 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ HRESULT (CALLBACK *pCallback)(P1, P2),
-    //     _In_ const P1& param1,
-    //     _In_ const P2& param2,
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     HRESULT (CALLBACK *pCallback)(P1, P2),
+    //     const P1& param1,
+    //     const P2& param2,
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(
@@ -114,11 +114,11 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ HRESULT (CALLBACK *pCallback)(P1, P2, P3),
-    //     _In_ const P1& param1,
-    //     _In_ const P2& param2,
-    //     _In_ const P3& param3,
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     HRESULT (CALLBACK *pCallback)(P1, P2, P3),
+    //     const P1& param1,
+    //     const P2& param2,
+    //     const P3& param3,
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(
@@ -140,10 +140,10 @@ namespace Threading
     inline
     HRESULT
     QueueWorkItem(
-        _In_ ::WorkItemPri priority,
-        _In_ T* pThis,
-        _In_ HRESULT (CALLBACK T::*pCallback)(Args&&...),
-        _In_ Args&&... args
+        ::WorkItemPri priority,
+        T* pThis,
+        HRESULT (CALLBACK T::*pCallback)(Args&&...),
+        Args&&... args
         )
     {
         return Details::QueueWorkItem(
@@ -157,9 +157,9 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ T* pThis,
-    //     _In_ HRESULT (CALLBACK T::*pCallback)(),
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     T* pThis,
+    //     HRESULT (CALLBACK T::*pCallback)(),
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(
@@ -176,10 +176,10 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ T* pThis,
-    //     _In_ HRESULT (CALLBACK T::*pCallback)(P1),
-    //     _In_ const P1& param1,
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     T* pThis,
+    //     HRESULT (CALLBACK T::*pCallback)(P1),
+    //     const P1& param1,
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(
@@ -197,11 +197,11 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ T* pThis,
-    //     _In_ HRESULT (CALLBACK T::*pCallback)(P1, P2),
-    //     _In_ const P1& param1,
-    //     _In_ const P2& param2,
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     T* pThis,
+    //     HRESULT (CALLBACK T::*pCallback)(P1, P2),
+    //     const P1& param1,
+    //     const P2& param2,
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(
@@ -220,12 +220,12 @@ namespace Threading
     // inline
     // HRESULT
     // QueueWorkItem(
-    //     _In_ T* pThis,
-    //     _In_ HRESULT (CALLBACK T::*pCallback)(P1, P2, P3),
-    //     _In_ const P1& param1,
-    //     _In_ const P2& param2,
-    //     _In_ const P3& param3,
-    //     _In_ ::WorkItemPri priority = ::WorkItemPri::Normal
+    //     T* pThis,
+    //     HRESULT (CALLBACK T::*pCallback)(P1, P2, P3),
+    //     const P1& param1,
+    //     const P2& param2,
+    //     const P3& param3,
+    //     ::WorkItemPri priority = ::WorkItemPri::Normal
     //     )
     // {
     //     return Details::QueueWorkItem(

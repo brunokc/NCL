@@ -1,30 +1,29 @@
 
-#include "pch.h"
 #include "Directory.h"
 #include "Path.h"
-#include "Win32Exception.h"
+#include "IOException.h"
 
-using namespace WFx::IO;
+using namespace WCL::IO;
 
-Directory::DirectoryIterator::DirectoryIterator(
-    _In_ const std::wstring& path,
-    _In_ IteratorType iteratorType
+Directory::DirectoryContentIterator::DirectoryContentIterator(
+    const std::wstring& path,
+    IteratorType iteratorType
     ) :
     _iteratorType(iteratorType)
 {
-    ZeroMemory(&_findData, sizeof(_findData));
+    _findData = { };
 
-    Details::FindFileHandle handle(::FindFirstFileEx(
+    wil::unique_hfind handle{ ::FindFirstFileEx(
         path.c_str(),
         FindExInfoBasic,
         &_findData,
         FindExSearchLimitToDirectories,
         nullptr,
         FIND_FIRST_EX_LARGE_FETCH
-        ));
-    if (!handle.IsValid())
+        ) };
+    if (!handle)
     {
-        throw Win32Exception(HRESULTFromLastError(), "Failed to enumerate path");
+        throw IOException("Failed to enumerate path");
     }
 
     _handle = std::move(handle);
@@ -37,49 +36,51 @@ Directory::DirectoryIterator::DirectoryIterator(
 }
 
 // Special case to support the end of the enumeration (end())
-Directory::DirectoryIterator::DirectoryIterator(
-    _In_ std::nullptr_t,
-    _In_ Directory::IteratorType iteratorType
+Directory::DirectoryContentIterator::DirectoryContentIterator(
+    std::nullptr_t,
+    Directory::IteratorType iteratorType
     ) :
     _iteratorType(iteratorType)
 {
-    ZeroMemory(&_findData, sizeof(_findData));
+    _findData = { };
 }
 
-Directory::DirectoryIterator::DirectoryIterator(
-    _In_ Directory::DirectoryIterator&& other
-    ) :
+Directory::DirectoryContentIterator::DirectoryContentIterator(
+    Directory::DirectoryContentIterator&& other
+    ) noexcept :
     _handle(std::move(other._handle))
 {
 }
 
-bool Directory::DirectoryIterator::operator==(
-    _In_ const Directory::DirectoryIterator& other
+//bool Directory::DirectoryContentIterator::operator==(
+//    const Directory::DirectoryContentIterator& other
+//    )
+//{
+//    return wcscmp(_findData.cFileName, other._findData.cFileName) == 0;
+//}
+
+bool Directory::DirectoryContentIterator::operator!=(
+    const Directory::DirectoryContentIterator& other
     )
 {
-    return wcscmp(_findData.cFileName, other._findData.cFileName) == 0;
+    // return !(*this == other);
+    return wcscmp(_findData.cFileName, other._findData.cFileName) != 0;
 }
 
-bool Directory::DirectoryIterator::operator!=(
-    _In_ const Directory::DirectoryIterator& other
-    )
+std::wstring& Directory::DirectoryContentIterator::operator*()
 {
-    return !(*this == other);
-}
-
-Directory Directory::DirectoryIterator::operator*()
-{
-    return Directory(_findData.cFileName);
+    _name = _findData.cFileName;
+    return _name;
 }
 
 // prefix ++ operator
-Directory::DirectoryIterator& Directory::DirectoryIterator::operator++()
+Directory::DirectoryContentIterator& Directory::DirectoryContentIterator::operator++()
 {
     MoveNext();
     return *this;
 }
 
-bool Directory::DirectoryIterator::IsEntryOfRightType()
+bool Directory::DirectoryContentIterator::IsEntryOfRightType()
 {
     switch (_iteratorType)
     {
@@ -96,71 +97,73 @@ bool Directory::DirectoryIterator::IsEntryOfRightType()
     }
 }
 
-void Directory::DirectoryIterator::MoveNext()
+void Directory::DirectoryContentIterator::MoveNext()
 {
     do
     {
-        ZeroMemory(&_findData, sizeof(_findData));
-        if (!::FindNextFile(_handle.Get(), &_findData))
+        _findData = { };
+        if (!::FindNextFile(_handle.get(), &_findData))
         {
             DWORD error = ::GetLastError();
             if (error == ERROR_NO_MORE_FILES)
             {
                 // Mark the end of the enumeration somehow
-                ZeroMemory(&_findData, sizeof(_findData));
+                _findData = { };
                 break;
             }
             else
             {
-                throw Win32Exception(HRESULT_FROM_WIN32(error), "Error while numerating directories (FindNextFile)");
+                throw IOException(HRESULT_FROM_WIN32(error), "Error while numerating directories (FindNextFile)");
             }
         }
     } while (!IsEntryOfRightType());
 }
 
 Directory::DirectoryEnumerator::DirectoryEnumerator(
-    _In_ std::wstring&& path
+    std::wstring&& path
     ) :
-    _path(std::move(path))
+    _begin(path, IteratorType::Directories),
+    _end(nullptr, IteratorType::Directories)
 {
 }
 
-Directory::DirectoryIterator Directory::DirectoryEnumerator::begin()
+Directory::DirectoryContentIterator& Directory::DirectoryEnumerator::begin()
 {
-    return DirectoryIterator(_path, IteratorType::Directories);
+    return _begin;
 }
 
-Directory::DirectoryIterator Directory::DirectoryEnumerator::end()
+Directory::DirectoryContentIterator& Directory::DirectoryEnumerator::end()
 {
-    return DirectoryIterator(nullptr, IteratorType::Directories);
+    return _end;
 }
 
 Directory::FileEnumerator::FileEnumerator(
-    _In_ std::wstring&& path
+    std::wstring&& path
     ) :
-    _path(std::move(path))
+    _begin(path, IteratorType::Files),
+    _end(nullptr, IteratorType::Files)
 {
 }
 
-Directory::DirectoryIterator Directory::FileEnumerator::begin()
+Directory::DirectoryContentIterator& Directory::FileEnumerator::begin()
 {
-    return DirectoryIterator(_path, IteratorType::Files);
+    return _begin;
 }
 
-Directory::DirectoryIterator Directory::FileEnumerator::end()
+Directory::DirectoryContentIterator& Directory::FileEnumerator::end()
 {
-    return DirectoryIterator(nullptr, IteratorType::Files);
+    return _end;
 }
 
 Directory::Directory(
-    _In_ const std::wstring& path
+    const std::wstring& path
     ):
     _path(path)
 {
 }
 
 bool Directory::Exists(
-    _In_ const std::wstring& path
+    const std::wstring& path
     )
 {
     WIN32_FILE_ATTRIBUTE_DATA attributeData = { };
@@ -169,7 +172,7 @@ bool Directory::Exists(
 }
 
 Directory::DirectoryEnumerator Directory::EnumerateDirectories(
-    _In_ const std::wstring& path
+    const std::wstring& path
     )
 {
     auto globPath = Path::Combine(path, L"*");
@@ -177,9 +180,17 @@ Directory::DirectoryEnumerator Directory::EnumerateDirectories(
 }
 
 Directory::FileEnumerator Directory::EnumerateFiles(
-    _In_ const std::wstring& path
+    const std::wstring& path
     )
 {
-    auto globPath = Path::Combine(path, L"*");
+    return EnumerateFiles(path, L"*");
+}
+
+Directory::FileEnumerator Directory::EnumerateFiles(
+    const std::wstring& path,
+    const std::wstring& searchPattern
+    )
+{
+    auto globPath = Path::Combine(path, searchPattern);
     return FileEnumerator(std::move(globPath));
 }

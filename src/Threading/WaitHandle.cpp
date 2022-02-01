@@ -9,48 +9,50 @@
 #include "pch.h"
 #include "WaitHandle.h"
 #include "Win32Exception.h"
+#include "Util.h"
 
-using namespace WFx::Threading;
-
-WaitHandle::WaitHandle()
-{
-}
+using namespace WCL::Threading;
 
 // WaitHandle::WaitHandle(
-//     _In_ Traits::Type&& h
+//     Traits::Type&& h
 //     ) :
 //     Event(std::move(h))
 // {
 // }
 
 WaitHandle::WaitHandle(
-    _Inout_ WaitHandle&& h
-    ) :
-    Event(std::move(h))
+    WaitHandle&& h
+    ) noexcept :
+    wil::unique_event(std::move(h))
 {
 }
 
 WaitHandle& WaitHandle::operator=(
-    _Inout_ WaitHandle&& h
-    )
+    WaitHandle&& h
+    ) noexcept
 {
-    *static_cast<Event*>(this) = std::move(h);
+    *static_cast<wil::unique_event*>(this) = std::move(h);
     return *this;
 }
 
+HANDLE WaitHandle::Get() const
+{
+    return get();
+}
+
 bool WaitHandle::Wait(
-    _In_ DWORD timeout
+    DWORD timeout
     ) const
 {
-    if (!IsValid())
+    if (!is_valid())
     {
-        throw Win32Exception(E_UNEXPECTED, "Invalid handle");
+        throw Win32Exception(HRESULT_FROM_WIN32(ERROR_INVALID_HANDLE), "Invalid handle");
     }
 
-    DWORD waitResult = ::WaitForSingleObjectEx(Get(), timeout, FALSE);
+    DWORD waitResult = ::WaitForSingleObjectEx(get(), timeout, FALSE);
     if (waitResult == WAIT_FAILED)
     {
-        throw Win32Exception(HRESULTFromLastError(), "Wait failed");
+        throw Win32Exception(HResultFromLastError(), "Wait failed");
     }
     else if (waitResult == WAIT_TIMEOUT)
     {
@@ -71,9 +73,9 @@ bool WaitHandle::Wait() const
 
 // static
 bool WaitHandle::WaitAll(
-    _In_ DWORD timeout,
+    DWORD timeout,
     _In_reads_(handleCount) const HANDLE* handles,
-    _In_ DWORD handleCount
+    DWORD handleCount
     )
 {
     int signaledHandleIndex = Wait(handles, handleCount, true, timeout);
@@ -83,7 +85,7 @@ bool WaitHandle::WaitAll(
 // static
 bool WaitHandle::WaitAll(
     _In_reads_(handleCount) const HANDLE* handles,
-    _In_ DWORD handleCount
+    DWORD handleCount
     )
 {
     return WaitAll(INFINITE, handles, handleCount);
@@ -95,9 +97,9 @@ bool WaitHandle::WaitAll(
 
 // static
 int WaitHandle::WaitAny(
-    _In_ DWORD timeout,
+    DWORD timeout,
     _In_reads_(handleCount) const HANDLE* handles,
-    _In_ DWORD handleCount
+    DWORD handleCount
     )
 {
     return Wait(handles, handleCount, false, timeout);
@@ -106,7 +108,7 @@ int WaitHandle::WaitAny(
 // static
 int WaitHandle::WaitAny(
     _In_reads_(handleCount) const HANDLE* handles,
-    _In_ DWORD handleCount
+    DWORD handleCount
     )
 {
     return WaitAny(INFINITE, handles, handleCount);
@@ -116,14 +118,19 @@ int WaitHandle::WaitAny(
 int
 WaitHandle::Wait(
     _In_reads_(handleCount) const HANDLE* pHandles,
-    _In_ DWORD handleCount,
-    _In_ bool waitForAll,
-    _In_ DWORD timeOut
+    DWORD handleCount,
+    bool waitForAll,
+    DWORD timeOut
     )
 {
-    if (pHandles == nullptr || handleCount == 0)
+    if (pHandles == nullptr)
     {
         throw std::invalid_argument("pHandles");
+    }
+
+    if (handleCount == 0)
+    {
+        throw std::invalid_argument("handleCount");
     }
 
     DWORD waitResult = ::WaitForMultipleObjectsEx(
@@ -137,7 +144,7 @@ WaitHandle::Wait(
     int signaledHandleIndex = -1;
     if (waitResult == WAIT_FAILED)
     {
-        throw Win32Exception(HRESULTFromLastError(), "Wait failed");
+        throw Win32Exception(HResultFromLastError(), "Wait failed");
     }
     else if (waitResult == WAIT_TIMEOUT)
     {

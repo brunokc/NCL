@@ -1,10 +1,9 @@
 
 #pragma once
 
-#include <string>
 #include "Exception.h"
 
-namespace WFx {
+namespace WCL {
 
 class Win32Exception :
     public Exception
@@ -20,4 +19,4 @@ private:
     HRESULT _hr;
 };
 
-} // namespace WFx
+} // namespace WCL

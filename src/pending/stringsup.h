@@ -13,11 +13,11 @@ struct CharTraits;
 template<>
 struct CharTraits<char>
 {
-    typedef char type;
-    typedef char* pointer;
-    typedef char const* const_pointer;
-    typedef std::string string;
-    typedef std::string const& const_string_ref;
+    using type = char;
+    using pointer = char*;
+    using const_pointer = char const*;
+    using string = std::string;
+    using const_string_ref = std::string const&;
 
     static const type Null = '\0';
 
@@ -61,11 +61,11 @@ struct CharTraits<char>
 template<>
 struct CharTraits<wchar_t>
 {
-    typedef wchar_t type;
-    typedef wchar_t* pointer;
-    typedef wchar_t const* const_pointer;
-    typedef std::wstring string;
-    typedef std::wstring const& const_string_ref;
+    using type = wchar_t;
+    using pointer = wchar_t*;
+    using const_pointer = wchar_t const*;
+    using string = std::wstring;
+    using const_string_ref = std::wstring const&;
 
     static const type Null = L'\0';
 
@@ -124,7 +124,7 @@ InplaceToLower(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringIsNullOrEmpty(
-    _In_ TChar const* str
+    TChar const* str
     )
 {
     return (str == nullptr || *str == TTraits::Null);
@@ -134,9 +134,9 @@ StringIsNullOrEmpty(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringStartsWith(
-    _In_ TChar const* str1,
-    _In_ TChar const* str2,
-    _In_ DWORD flags = STRING_COMPARE_CASE_SENSITIVE
+    TChar const* str1,
+    TChar const* str2,
+    DWORD flags = STRING_COMPARE_CASE_SENSITIVE
     )
 {
     if (flags & STRING_COMPARE_CASE_SENSITIVE)
@@ -152,9 +152,9 @@ StringStartsWith(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringStartsWith(
-    _In_ std::basic_string<TChar> const& str1,
-    _In_ TChar const* str2,
-    _In_ DWORD flags = STRING_COMPARE_CASE_SENSITIVE
+    std::basic_string<TChar> const& str1,
+    TChar const* str2,
+    DWORD flags = STRING_COMPARE_CASE_SENSITIVE
     )
 {
     return StringStartsWith(str1.c_str(), str2, flags);
@@ -164,9 +164,9 @@ StringStartsWith(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringEndsWith(
-    _In_ TChar const* str1,
-    _In_ TChar const* str2,
-    _In_ DWORD flags = STRING_COMPARE_CASE_SENSITIVE
+    TChar const* str1,
+    TChar const* str2,
+    DWORD flags = STRING_COMPARE_CASE_SENSITIVE
     )
 {
     size_t str1Lengh = TTraits::Length(str1);
@@ -190,9 +190,9 @@ StringEndsWith(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringEndsWith(
-    _In_ std::basic_string<TChar> const& str1,
-    _In_ TChar const* str2,
-    _In_ DWORD flags = STRING_COMPARE_CASE_SENSITIVE
+    std::basic_string<TChar> const& str1,
+    TChar const* str2,
+    DWORD flags = STRING_COMPARE_CASE_SENSITIVE
     )
 {
     return StringEndsWith(str1.c_str(), str2, flags);
@@ -202,9 +202,9 @@ StringEndsWith(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringContains(
-    _In_ TChar const* str1,
-    _In_ TChar const* str2,
-    _In_ DWORD flags = STRING_COMPARE_CASE_SENSITIVE
+    TChar const* str1,
+    TChar const* str2,
+    DWORD flags = STRING_COMPARE_CASE_SENSITIVE
     )
 {
     if (flags & STRING_COMPARE_CASE_SENSITIVE)
@@ -224,9 +224,9 @@ StringContains(
 template<typename TChar, typename TTraits = CharTraits<TChar>>
 bool
 StringContains(
-    _In_ std::basic_string<TChar> const& str1,
-    _In_ std::basic_string<TChar> const& str2,
-    _In_ DWORD flags = STRING_COMPARE_CASE_SENSITIVE
+    std::basic_string<TChar> const& str1,
+    std::basic_string<TChar> const& str2,
+    DWORD flags = STRING_COMPARE_CASE_SENSITIVE
     )
 {
     return StringContains(str1.c_str(), str2.c_str(), flags);
@@ -236,7 +236,7 @@ template<typename TChar, typename TTraits = CharTraits<TChar>>
 void
 StringSanitize(
     _Inout_ std::basic_string<TChar>& str,
-    _In_ TChar replacementChar = '.'
+    TChar replacementChar = '.'
     )
 {
     for (auto& c : str)
@@ -262,7 +262,7 @@ UnicodeToAnsi(
 inline
 std::string
 UnicodeToAnsi(
-    _In_ std::wstring const& str
+    std::wstring const& str
     )
 {
     return UnicodeToAnsi(str.c_str());

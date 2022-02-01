@@ -6,33 +6,29 @@
 
 #pragma once
 
-#include "pch.h"
 #include "EventWaitHandle.h"
 #include "Win32Exception.h"
+#include "Util.h"
 
-using namespace WFx::Threading;
-
-EventWaitHandle::EventWaitHandle()
-{
-}
+using namespace WCL::Threading;
 
 // EventWaitHandle::EventWaitHandle(
-//     _In_ Traits::Type&& h
+//     Traits::Type&& h
 //     ) :
 //     WaitHandle(std::move(h))
 // {
 // }
 
 EventWaitHandle::EventWaitHandle(
-    _Inout_ EventWaitHandle&& h
-    ) :
+    EventWaitHandle&& h
+    ) noexcept :
     WaitHandle(std::move(h))
 {
 }
 
 EventWaitHandle& EventWaitHandle::operator=(
-    _Inout_ EventWaitHandle&& h
-    )
+    EventWaitHandle&& h
+    ) noexcept
 {
     *static_cast<WaitHandle*>(this) = std::move(h);
     return *this;
@@ -40,8 +36,8 @@ EventWaitHandle& EventWaitHandle::operator=(
 
 void
 EventWaitHandle::OpenExisting(
-    _In_ PCWSTR name,
-    _In_ bool modifiable
+    PCWSTR name,
+    bool modifiable
     )
 {
     DWORD desiredAccess = SYNCHRONIZE | STANDARD_RIGHTS_READ;
@@ -52,10 +48,10 @@ EventWaitHandle::OpenExisting(
         desiredAccess |= EVENT_MODIFY_STATE;
     }
 
-    handle.Attach(::OpenEvent(desiredAccess, FALSE, name));
-    if (!handle.IsValid())
+    handle.reset(::OpenEvent(desiredAccess, FALSE, name));
+    if (!handle)
     {
-        throw Win32Exception(HRESULTFromLastError(), "Failed to open existing wait handle");
+        throw Win32Exception(HResultFromLastError(), "Failed to open existing wait handle");
     }
 
     *this = std::move(handle);
@@ -63,7 +59,7 @@ EventWaitHandle::OpenExisting(
 
 void
 EventWaitHandle::OpenExisting(
-    _In_ PCWSTR name
+    PCWSTR name
     )
 {
     OpenExisting(name, false);
@@ -72,35 +68,35 @@ EventWaitHandle::OpenExisting(
 void
 EventWaitHandle::Set() const
 {
-    if (!IsValid())
+    if (!is_valid())
     {
-        throw Win32Exception(E_UNEXPECTED, "Invalid handle");
+        throw Win32Exception(HRESULT_FROM_WIN32(ERROR_INVALID_HANDLE), "Invalid handle");
     }
 
-    if (!::SetEvent(Get()))
+    if (!::SetEvent(get()))
     {
-        throw Win32Exception(HRESULTFromLastError(), "Failed to set event");
+        throw Win32Exception(HResultFromLastError(), "Failed to set event");
     }
 }
 
 void
 EventWaitHandle::Reset() const
 {
-    if (!IsValid())
+    if (!is_valid())
     {
-        throw Win32Exception(E_UNEXPECTED, "Invalid handle");
+        throw Win32Exception(HRESULT_FROM_WIN32(ERROR_INVALID_HANDLE), "Invalid handle");
     }
 
-    if (!::ResetEvent(Get()))
+    if (!::ResetEvent(get()))
     {
-        throw Win32Exception(HRESULTFromLastError(), "Failed to reset event");
+        throw Win32Exception(HResultFromLastError(), "Failed to reset event");
     }
 }
 
 void
 EventWaitHandle::Initialize(
-    _In_ EventType eventType,
-    _In_ EventInitialState initialState,
+    EventType eventType,
+    EventInitialState initialState,
     _In_opt_ PCWSTR name
     )
 {
@@ -117,15 +113,15 @@ EventWaitHandle::Initialize(
         flags |= CREATE_EVENT_INITIAL_SET;
     }
 
-    handle.Attach(::CreateEventEx(
+    handle.reset(::CreateEventEx(
         nullptr,
         name,
         flags,
         EVENT_ALL_ACCESS
         ));
-    if (!handle.IsValid())
+    if (!handle)
     {
-        throw Win32Exception(HRESULTFromLastError(), "CreateEventEx failed");
+        throw Win32Exception(HResultFromLastError(), "CreateEventEx failed");
     }
 
     *this = std::move(handle);

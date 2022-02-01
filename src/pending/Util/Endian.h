@@ -1,7 +1,7 @@
 
 #pragma once
 
-namespace WFx {
+namespace WCL {
 
 inline
 void
@@ -35,4 +35,4 @@ EndianSwap(_Inout_ std::uint64_t& x)
         (x << 56);
 }
 
-} // namespace WFx
+} // namespace WCL

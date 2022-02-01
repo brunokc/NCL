@@ -1,8 +1,8 @@
 
 #pragma once
 
-namespace WFx {
+namespace WCL {
 
 using byte = uint8_t;
 
-} // namespace WFx
+} // namespace WCL

@@ -1,7 +1,7 @@
 
 #pragma once
 
-namespace WFx {
+namespace WCL {
 namespace Util {
 
 template<class T>
@@ -57,4 +57,4 @@ struct FunctionTraits :
 {
 };
 
-}} //namespace WFx::Util
+}} //namespace WCL::Util

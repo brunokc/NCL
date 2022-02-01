@@ -1,6 +1,9 @@
 ﻿#pragma once
 
-#include "Exception.h"
+#include <windows.h>
+#include "Win32Exception.h"
+
+using namespace WCL;
 
 inline HRESULT
 HResultFromLastError()
@@ -8,10 +11,28 @@ HResultFromLastError()
 	return HRESULT_FROM_WIN32(::GetLastError());
 }
 
+template<class TException>
+inline void
+ThrowIfFailed(HRESULT hr, const char* message)
+{
+	if (FAILED(hr))
+	{
+		throw TException(hr, message);
+	}
+}
+
+template<class TException>
+inline void
+ThrowIfLastError(const char* message)
+{
+	HRESULT hr = HResultFromLastError();
+	ThrowIfFailed<TException>(hr, message);
+}
+
 template<typename THandle>
 THandle
 DuplicateFileHandle(
-	_In_ const THandle& handle
+	const THandle& handle
 	)
 {
 	THandle dupHandle;

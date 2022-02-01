@@ -8,8 +8,7 @@
 
 #include "WaitHandle.h"
 
-namespace WFx {
-namespace Threading {
+namespace WCL::Threading {
 
 //
 // Events
@@ -31,28 +30,28 @@ class EventWaitHandle :
     public WaitHandle
 {
 protected:
-    explicit EventWaitHandle();
+    explicit EventWaitHandle() = default;
 
     // explicit EventWaitHandle(
-    //     _In_ Traits::Type&& h
+    //     Traits::Type&& h
     //     );
 
 public:
     EventWaitHandle(
-        _Inout_ EventWaitHandle&& h
-        );
+        EventWaitHandle&& h
+        ) noexcept;
 
     EventWaitHandle& operator=(
-        _Inout_ EventWaitHandle&& h
+        EventWaitHandle&& h
+        ) noexcept;
+
+    void OpenExisting(
+        PCWSTR name,
+        bool modifiable
         );
 
     void OpenExisting(
-        _In_ PCWSTR name,
-        _In_ bool modifiable
-        );
-
-    void OpenExisting(
-        _In_ PCWSTR name
+        PCWSTR name
         );
 
     void Set() const;
@@ -62,16 +61,16 @@ public:
 protected:
     void
     Initialize(
-        _In_ EventType eventType,
-        _In_ EventInitialState initialState,
+        EventType eventType,
+        EventInitialState initialState,
         _In_opt_ PCWSTR name
         );
 
 private:
     // Copy construction is not allowed
     EventWaitHandle(
-        _In_ const EventWaitHandle&
+        const EventWaitHandle&
         ) = delete;
 };
 
-}} // namespace WFx::Threading
+} // namespace WCL::Threading

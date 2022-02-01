@@ -15,7 +15,7 @@ template<typename TFunction>
 class Delegate
 {
 private:
-    using ReturnType = typename WFx::Util::FunctionTraits<TFunction>::ReturnType;
+    using ReturnType = typename WCL::Util::FunctionTraits<TFunction>::ReturnType;
 
 public:
     Delegate()
@@ -24,7 +24,7 @@ public:
 
     template<typename R, typename... Args>
     Delegate(
-        _In_ R (*function)(Args...)
+        R (*function)(Args...)
         ) :
         _delegate(function)
     {
@@ -32,11 +32,11 @@ public:
 
     template<class T, typename R, typename... Args>
     Delegate(
-        _In_ T* object,
-        _In_ R (T::*method)(Args...)
+        T* object,
+        R (T::*method)(Args...)
         )
     {
-        _delegate = [object, method](_In_ Args&&... args) -> R
+        _delegate = [object, method](Args&&... args) -> R
         {
             return (object->*method)(std::forward<Args>(args)...);
         };
@@ -44,11 +44,11 @@ public:
 
     template<class T, typename R, typename... Args>
     Delegate(
-        _In_ const T* object,
-        _In_ R (T::*method)(Args...) const
+        const T* object,
+        R (T::*method)(Args...) const
         )
     {
-        _delegate = [object, method](_In_ Args&&... args) -> R
+        _delegate = [object, method](Args&&... args) -> R
         {
             return (object->*method)(std::forward<Args>(args)...);
         };
@@ -68,13 +68,13 @@ private:
 template<class T>
 struct FunctionType
 {
-    using Type = typename WFx::Util::FunctionTraits<decltype(&T::operator())>::FunctionType;
+    using Type = typename WCL::Util::FunctionTraits<decltype(&T::operator())>::FunctionType;
 };
 
 template<class T>
 Delegate<typename FunctionType<T>::Type>
 MakeDelegate(
-    _In_ const T& lambda
+    const T& lambda
     )
 {
     return MakeDelegate(&lambda, &T::operator());
@@ -83,8 +83,8 @@ MakeDelegate(
 template<class T, typename R, typename... Args>
 Delegate<R(Args...)>
 MakeDelegate(
-    _In_ T* object,
-    _In_ R (T::*method)(Args...)
+    T* object,
+    R (T::*method)(Args...)
     )
 {
     return Delegate<R(Args...)>(object, method);
@@ -93,8 +93,8 @@ MakeDelegate(
 template<class T, typename R, typename... Args>
 Delegate<R(Args...)>
 MakeDelegate(
-    _In_ const T* object,
-    _In_ R (T::*method)(Args...) const
+    const T* object,
+    R (T::*method)(Args...) const
     )
 {
     return Delegate<R(Args...)>(object, method);

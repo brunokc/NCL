@@ -3,21 +3,20 @@
 
 #include "Encoding.h"
 
-namespace WFx {
-namespace Text {
+namespace WCL::Text {
 
 class UTF8Encoding :
     public Encoding
 {
 public:
     virtual std::vector<uint8_t> GetBytes(
-        _In_ const std::wstring& str
+        const std::wstring& str
         );
 
     virtual std::wstring GetString(
-        _In_bcount_(byteCount) const BYTE* bytes,
-        _In_ size_t byteCount
+        const BYTE* bytes,
+        int byteCount
         );
 };
 
-}} // namespace WFx::Text
+} // namespace WCL::Text

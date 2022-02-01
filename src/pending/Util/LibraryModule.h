@@ -4,7 +4,7 @@
 #include "Win32Exception.h"
 #include "FunctionTraits.h"
 
-namespace WFx {
+namespace WCL {
 namespace Util {
 
 namespace Details {
@@ -13,7 +13,7 @@ namespace Details {
     {
         typedef HMODULE Type;
 
-        inline static bool Close(_In_ Type h) throw()
+        inline static bool Close(Type h) throw()
         {
             return ::FreeLibrary(h) != FALSE;
         }
@@ -56,7 +56,7 @@ private:
 class LibraryModule
 {
 public:
-    LibraryModule(_In_ PCWSTR modulePath) :
+    LibraryModule(PCWSTR modulePath) :
         m_hrLoadLibrary(S_OK)
     {
         _module.Attach(::LoadLibraryEx(modulePath, nullptr, 0));
@@ -82,7 +82,7 @@ public:
     }
 
     template<typename TFunc>
-    LibraryFunction<TFunc> GetProc(_In_ PCSTR procName)
+    LibraryFunction<TFunc> GetProc(PCSTR procName)
     {
         return static_cast<TFunc>(::GetProcAddress(_module.Get(), procName));
     }
@@ -106,4 +106,4 @@ private:
     auto finalizeProc = mod.GetProc<HRESULT(IImmersiveShellController*)>("FinalizeInitMoshplat");
 */
 
-}} // namespace WFx::Util
+}} // namespace WCL::Util

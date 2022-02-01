@@ -2,33 +2,21 @@
 #pragma once
 
 #include <string>
-#include <wrl/wrappers/corewrappers.h>
+#include <memory>
+#include <wil/resource.h>
 
-namespace WFx {
-namespace IO {
+#include "File.h"
+#include "collections/IEnumerable.h"
 
-namespace Details {
+using namespace WCL::Collections;
 
-    // Specialization for FindFirstFile handles
-    struct FindFileHandleTraits :
-        public Microsoft::WRL::Wrappers::HandleTraits::FileHandleTraits
-    {
-        typedef HANDLE Type;
-
-        inline static bool Close(_In_ Type h) throw()
-        {
-            return ::FindClose(h) != FALSE;
-        }
-    };
-
-    typedef Microsoft::WRL::Wrappers::HandleT<FindFileHandleTraits> FindFileHandle;
-}
+namespace WCL::IO {
 
 class Directory
 {
 public:
     Directory(
-        _In_ const std::wstring& path
+        const std::wstring& path
         );
 
 public:
@@ -38,36 +26,38 @@ public:
         Directories,
     };
 
-    class DirectoryIterator
+private:
+    class DirectoryContentIterator : 
+        public WCL::Collections::IEnumerator<DirectoryContentIterator, std::wstring>
     {
     public:
-        DirectoryIterator(
-            _In_ const std::wstring& path,
-            _In_ IteratorType iteratorType
+        DirectoryContentIterator(
+            const std::wstring& path,
+            IteratorType iteratorType
             );
 
         // Special case to support the end of the enumeration (end())
-        DirectoryIterator(
-            _In_ std::nullptr_t,
-            _In_ IteratorType iteratorType
+        DirectoryContentIterator(
+            std::nullptr_t,
+            IteratorType iteratorType
             );
 
-        DirectoryIterator(
-            _In_ DirectoryIterator&& other
-            );
+        DirectoryContentIterator(
+            const DirectoryContentIterator& other
+            ) = default;
 
-        bool operator==(
-            _In_ const DirectoryIterator& other
-            );
+        DirectoryContentIterator(
+            DirectoryContentIterator&& other
+            ) noexcept;
 
         bool operator!=(
-            _In_ const DirectoryIterator& other
-            );
+            const DirectoryContentIterator& other
+            ) override;
 
-        Directory operator*();
+        std::wstring& operator*() override;
 
         // prefix ++ operator
-        DirectoryIterator& operator++();
+        DirectoryContentIterator& operator++() override;
 
     private:
         bool IsEntryOfRightType();
@@ -75,65 +65,77 @@ public:
         void MoveNext();
 
     private:
-        Details::FindFileHandle _handle;
-        WIN32_FIND_DATAW _findData;
-        IteratorType _iteratorType;
+        IteratorType _iteratorType{ };
+        wil::shared_hfind _handle;
+        std::wstring _name;
+        WIN32_FIND_DATAW _findData{ };
     };
 
-    class DirectoryEnumerator
+//public:
+    class DirectoryEnumerator : 
+        public WCL::Collections::IEnumerable<DirectoryContentIterator, std::wstring>
     {
         friend class Directory;
 
     private:
         DirectoryEnumerator(
-            _In_ std::wstring&& path
+            std::wstring&& path
             );
 
     public:
-        DirectoryIterator begin();
+        DirectoryContentIterator& begin();
 
-        DirectoryIterator end();
+        DirectoryContentIterator& end();
 
     private:
-        std::wstring _path;
+        DirectoryContentIterator _begin;
+        DirectoryContentIterator _end;
     };
 
-    class FileEnumerator
+    class FileEnumerator : 
+        public WCL::Collections::IEnumerable<DirectoryContentIterator, std::wstring>
     {
         friend class Directory;
 
     private:
         FileEnumerator(
-            _In_ std::wstring&& path
+            std::wstring&& path
             );
 
     public:
-        DirectoryIterator begin();
+        DirectoryContentIterator& begin();
 
-        DirectoryIterator end();
+        DirectoryContentIterator& end();
 
     private:
-        std::wstring _path;
+        DirectoryContentIterator _begin;
+        DirectoryContentIterator _end;
     };
 
 public:
     static
     bool Exists(
-        _In_ const std::wstring& path
+        const std::wstring& path
         );
 
     static
     DirectoryEnumerator EnumerateDirectories(
-        _In_ const std::wstring& path
+        const std::wstring& path
         );
 
     static
     FileEnumerator EnumerateFiles(
-        _In_ const std::wstring& path
+        const std::wstring& path
+        );
+
+    static
+    FileEnumerator EnumerateFiles(
+        const std::wstring& path,
+        const std::wstring& searchPattern
         );
 
 public:
-    std::wstring GetName() const
+    const std::wstring& Name() const
     {
         return _path;
     }
@@ -142,4 +144,4 @@ private:
     std::wstring _path;
 };
 
-}} // namespace WFx::IO
+} // namespace WCL::IO

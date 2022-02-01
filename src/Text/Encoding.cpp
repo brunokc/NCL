@@ -1,16 +1,20 @@
 
 #pragma once
 
+#include <stdexcept>
+
 #include "Encoding.h"
 #include "ASCIIEncoding.h"
 #include "UnicodeEncoding.h"
 #include "UTF8Encoding.h"
+#include "Win32Exception.h"
+#include "Util.h"
 
-using namespace WFx::Text;
+using namespace WCL::Text;
 
-const Property<std::shared_ptr<Encoding>> Encoding::ASCII = std::make_shared<ASCIIEncoding>();
-const Property<std::shared_ptr<Encoding>> Encoding::Unicode = std::make_shared<UnicodeEncoding>();
-const Property<std::shared_ptr<Encoding>> Encoding::UTF8 = std::make_shared<UTF8Encoding>();
+const std::shared_ptr<Encoding> Encoding::ASCII = std::make_shared<ASCIIEncoding>();
+const std::shared_ptr<Encoding> Encoding::Unicode = std::make_shared<UnicodeEncoding>();
+const std::shared_ptr<Encoding> Encoding::UTF8 = std::make_shared<UTF8Encoding>();
 
 //
 // Unicode -> UTF8
@@ -21,8 +25,8 @@ const Property<std::shared_ptr<Encoding>> Encoding::UTF8 = std::make_shared<UTF8
 
 std::wstring
 Encoding::MultiByteToWideString(
-    _In_ uint32_t codePage,
-    _In_ const std::string& str
+    uint32_t codePage,
+    const std::string& str
     )
 {
     return MultiByteToWideString(codePage, str.c_str(), -1);
@@ -30,9 +34,9 @@ Encoding::MultiByteToWideString(
 
 std::wstring
 Encoding::MultiByteToWideString(
-    _In_ uint32_t codePage,
-    _In_bcount_(strCount) PCSTR str,
-    _In_ size_t strCount
+    uint32_t codePage,
+    const char* str,
+    int strCount
     )
 {
     if (strCount == 0)
@@ -66,7 +70,7 @@ Encoding::MultiByteToWideString(
         &result[0],
         sizeRequired
         );
-    if (sizeRequired <= 0)
+    if (sizeConverted <= 0)
     {
         throw Win32Exception(HResultFromLastError(), "MultiByteToWideChar failed");
     }
@@ -76,18 +80,18 @@ Encoding::MultiByteToWideString(
 
 std::vector<uint8_t>
 Encoding::WideStringToMultiByteBuffer(
-    _In_ uint32_t codePage,
-    _In_ const std::wstring& str
+    uint32_t codePage,
+    const std::wstring& str
     )
 {
-    return WideToMultiByteString(codePage, str.c_str(), -1);
+    return WideStringToMultiByteBuffer(codePage, str.c_str(), static_cast<int>(str.size()));
 }
 
 std::vector<uint8_t>
 Encoding::WideStringToMultiByteBuffer(
-    _In_ uint32_t codePage,
-    _In_bcount_(strCount) PCWSTR str,
-    _In_ size_t strCount
+    uint32_t codePage,
+    const wchar_t* str,
+    int strCount
     )
 {
     if (strCount == 0)
@@ -117,12 +121,12 @@ Encoding::WideStringToMultiByteBuffer(
         0,
         str,
         strCount,
-        &result[0],
+        reinterpret_cast<char*>(&result[0]),
         sizeRequired,
         nullptr,
         nullptr
         );
-    if (sizeRequired <= 0)
+    if (sizeConverted <= 0)
     {
         throw Win32Exception(HResultFromLastError(), "WideCharToMultiByte failed");
     }

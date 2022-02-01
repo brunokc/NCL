@@ -1,7 +1,9 @@
 
 #pragma once
 
-namespace WFx {
+#include <stdexcept>
+
+namespace WCL {
 
 class Exception :
     public std::exception

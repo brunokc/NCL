@@ -1,7 +1,7 @@
 
 #pragma once
 
-namespace WFx {
+namespace WCL {
 namespace Base {
 
 namespace Details {
@@ -67,4 +67,4 @@ private:
     T _value;
 };
 
-}} // namespace WFx::Base
+}} // namespace WCL::Base

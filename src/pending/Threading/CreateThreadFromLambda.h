@@ -6,7 +6,7 @@
 
 #include <wil/resources.h>
 
-namespace WFx {
+namespace WCL {
 namespace Threading {
 
 // CreateThreadFromLambda: allow for the creation of a thread while passing any lambda, including
@@ -14,12 +14,12 @@ namespace Threading {
 template<typename TLambda>
 wil::unique_handle
 CreateThread(
-    _In_ TLambda const &lambda
+    TLambda const &lambda
     )
 {
     // The thread proc lambda needs to have an empty capture so it can be converted into a function
     // pointer and thus be passed as a parameter to functions like CreateThread or QueueUserWorkItem
-    auto threadProc = [](_In_ void* pParam) -> DWORD
+    auto threadProc = [](void* pParam) -> DWORD
     {
         std::unique_ptr<TLambda> pLambda(static_cast<TLambda*>(pParam));
         (*pLambda)();
@@ -43,4 +43,4 @@ CreateThread(
     return threadHandle;
 }
 
-}} // namespace WFx::Threading
+}} // namespace WCL::Threading

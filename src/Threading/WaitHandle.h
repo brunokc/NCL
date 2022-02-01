@@ -7,10 +7,10 @@
 #pragma once
 
 #include <windows.h>
-#include <wrl/wrappers/corewrappers.h>
+//#include <wrl/wrappers/corewrappers.h>
+#include <wil/resource.h>
 
-namespace WFx {
-namespace Threading {
+namespace WCL::Threading {
 
 //
 // WaitHandle
@@ -20,27 +20,24 @@ namespace Threading {
 // operations like copying/conversion operations, attach/detach and wait operations.
 //
 class WaitHandle :
-    public Microsoft::WRL::Wrappers::Event
+    public wil::unique_event
 {
 protected:
-    explicit WaitHandle();
-
-    // explicit WaitHandle(
-    //     _In_ Traits::Type&& h
-    //     );
+    explicit WaitHandle() = default;
 
 public:
     WaitHandle(
-        _Inout_ WaitHandle&& h
-        );
+        WaitHandle&& h
+        ) noexcept;
 
     WaitHandle& operator=(
-        _Inout_ WaitHandle&& h
-        );
+        WaitHandle&& h
+        ) noexcept;
 
-public:
+    HANDLE Get() const;
+
     bool Wait(
-        _In_ DWORD timeout
+        DWORD timeout
         ) const;
 
     bool Wait() const;
@@ -52,12 +49,12 @@ public:
     template<typename... Args>
     static
     bool WaitAll(
-        _In_ DWORD timeout,
-        _In_ const WaitHandle& handle,
-        _In_ const Args&... args
+        DWORD timeout,
+        const WaitHandle& handle,
+        const Args&... args
         )
     {
-        const HANDLE handles[] = { handle.Get(), args.Get()... };
+        const HANDLE handles[] = { handle.get(), args.get()... };
         int signaledHandleIndex = Wait(handles, _countof(handles), true, timeout);
         return (signaledHandleIndex >= 0);
     }
@@ -65,8 +62,8 @@ public:
     template<typename T, typename... Args>
     static
     bool WaitAll(
-        _In_ const WaitHandle& handle,
-        _In_ Args&&... args
+        const WaitHandle& handle,
+        Args&&... args
         )
     {
         return WaitAll(INFINITE, handle, std::forward<Args>(args)...);
@@ -74,15 +71,15 @@ public:
 
     static
     bool WaitAll(
-        _In_ DWORD timeout,
+        DWORD timeout,
         _In_reads_(handleCount) const HANDLE* handles,
-        _In_ DWORD handleCount
+        DWORD handleCount
         );
 
     static
     bool WaitAll(
         _In_reads_(handleCount) const HANDLE* handles,
-        _In_ DWORD handleCount
+        DWORD handleCount
         );
 
     //
@@ -92,20 +89,20 @@ public:
     template<typename... Args>
     static
     int WaitAny(
-        _In_ DWORD timeout,
-        _In_ const WaitHandle& handle,
-        _In_ const Args&... args
+        DWORD timeout,
+        const WaitHandle& handle,
+        const Args&... args
         )
     {
-        const HANDLE handles[] = { handle.Get(), args.Get()... };
+        const HANDLE handles[] = { handle.get(), args.get()... };
         return Wait(handles, _countof(handles), false, timeout);
     }
 
     template<typename... Args>
     static
     int WaitAny(
-        _In_ const WaitHandle& handle,
-        _In_ Args&&... args
+        const WaitHandle& handle,
+        Args&&... args
         )
     {
         return WaitAny(INFINITE, handle, std::forward<Args>(args)...);
@@ -113,32 +110,32 @@ public:
 
     static
     int WaitAny(
-        _In_ DWORD timeout,
+        DWORD timeout,
         _In_reads_(handleCount) const HANDLE* handles,
-        _In_ DWORD handleCount
+        DWORD handleCount
         );
 
     static
     int WaitAny(
         _In_reads_(handleCount) const HANDLE* handles,
-        _In_ DWORD handleCount
+        DWORD handleCount
         );
 
 private:
     // Copy construction is not allowed
     WaitHandle(
-        _In_ const WaitHandle&
+        const WaitHandle&
         ) = delete;
 
 private:
     static
     int
-    WaitHandle::Wait(
+    Wait(
         _In_reads_(handleCount) const HANDLE* pHandles,
-        _In_ DWORD handleCount,
-        _In_ bool waitForAll,
-        _In_ DWORD timeOut
+        DWORD handleCount,
+        bool waitForAll,
+        DWORD timeOut
         );
 };
 
-}} // namespace WFx::Threading
+} // namespace WCL::Threading

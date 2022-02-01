@@ -6,7 +6,7 @@
 
 #pragma once
 
-namespace WFx {
+namespace WCL {
 
 //
 // This class represents a value which can be null.
@@ -207,4 +207,4 @@ Nullable<T> MakeNullable()
     return Nullable<T>();
 }
 
-} // namespace WFx
+} // namespace WCL
