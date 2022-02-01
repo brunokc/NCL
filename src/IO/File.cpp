@@ -9,16 +9,6 @@
 using namespace WCL::IO;
 
 // static 
-bool File::Exists(
-    const std::wstring& path
-    )
-{
-    WIN32_FILE_ATTRIBUTE_DATA attributeData{ };
-    return ::GetFileAttributesEx(path.c_str(), GetFileExInfoStandard, &attributeData) != FALSE &&
-        !(attributeData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE));
-}
-
-// static 
 void File::Delete(
     const std::wstring& path
     )
@@ -30,20 +20,73 @@ void File::Delete(
 }
 
 // static 
-std::vector<std::wstring> File::ReadAllLines(
+bool File::Exists(
     const std::wstring& path
     )
 {
-    std::vector<std::wstring> lines;
+    WIN32_FILE_ATTRIBUTE_DATA attributeData{ };
+    return ::GetFileAttributesEx(path.c_str(), GetFileExInfoStandard, &attributeData) != FALSE &&
+        !(attributeData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE));
+}
 
-    auto streamReader = std::make_shared<StreamReader>(path);
-    std::optional<std::wstring> line;
-    while ((line = streamReader->ReadLine()).has_value())
+// static 
+FileAttributes File::GetAttributes(
+    const std::wstring& path
+    )
+{
+    DWORD attributes = ::GetFileAttributes(path.c_str());
+    if (attributes == INVALID_FILE_ATTRIBUTES)
     {
-        lines.push_back(line.value());
+        throw IOException("failed to set attributes");
     }
 
-    return lines;    
+    return static_cast<FileAttributes>(attributes);
+}
+
+// static 
+FILETIME File::GetCreationTime(
+    const std::wstring& path
+    )
+{
+    wil::unique_hfile file = IOHelper::Open(
+        path,
+        GENERIC_READ,
+        0,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL
+        );
+
+    FILETIME ft{ };
+    BOOL success = ::GetFileTime(file.get(), &ft, nullptr, nullptr);
+    if (!success)
+    {
+        throw IOException("failed to get creation time");
+    }
+
+    return ft;
+}
+
+// static 
+FILETIME File::GetLastWriteTime(
+    const std::wstring& path
+    )
+{
+    wil::unique_hfile file = IOHelper::Open(
+        path,
+        GENERIC_READ,
+        0,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL
+        );
+
+    FILETIME ft{ };
+    BOOL success = ::GetFileTime(file.get(), nullptr, nullptr, &ft);
+    if (!success)
+    {
+        throw IOException("failed to get creation time");
+    }
+
+    return ft;
 }
 
 // static 
@@ -118,4 +161,77 @@ std::shared_ptr<FileStream> File::Open(
         );
 
     return FileStream::Make(std::move(handle));
+}
+
+// static 
+std::vector<std::wstring> File::ReadAllLines(
+    const std::wstring& path
+    )
+{
+    std::vector<std::wstring> lines;
+
+    auto streamReader = std::make_shared<StreamReader>(path);
+    std::optional<std::wstring> line;
+    while ((line = streamReader->ReadLine()).has_value())
+    {
+        lines.push_back(line.value());
+    }
+
+    return lines;    
+}
+
+// static 
+void File::SetAttributes(
+    const std::wstring& path,
+    FileAttributes attributes
+    )
+{
+    BOOL success = ::SetFileAttributes(
+        path.c_str(),
+        static_cast<DWORD>(attributes)
+        );
+    if (!success)
+    {
+        throw IOException("failed to set attributes");
+    }
+}
+
+// static 
+void File::SetCreationTime(
+    const std::wstring& path,
+    FILETIME ft
+    )
+{
+    wil::unique_hfile file = IOHelper::Open(
+        path,
+        FILE_WRITE_ATTRIBUTES,
+        0,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL
+        );
+    BOOL success = ::SetFileTime(file.get(), &ft, nullptr, nullptr);
+    if (!success)
+    {
+        throw IOException("failed to set creation time");
+    }
+}
+
+// static 
+void File::SetLastWriteTime(
+    const std::wstring& path,
+    FILETIME ft
+    )
+{
+    wil::unique_hfile file = IOHelper::Open(
+        path,
+        FILE_WRITE_ATTRIBUTES,
+        0,
+        OPEN_EXISTING,
+        FILE_ATTRIBUTE_NORMAL
+        );
+    BOOL success = ::SetFileTime(file.get(), nullptr, nullptr, &ft);
+    if (!success)
+    {
+        throw IOException("failed to set creation time");
+    }
 }
