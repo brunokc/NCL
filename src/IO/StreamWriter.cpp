@@ -159,15 +159,15 @@ void StreamWriter::WriteBuffer(
 
     if (appendNewLine)
     {
-        std::vector<BYTE> newLine = Encoding::UTF8->GetBytes(Environment::NewLine);
-        for (int i = 0; i < newLine.size(); ++i)
+        auto newLineBytes = Encoding::UTF8->GetBytes(Environment::NewLine);
+        for (int i = 0; i < newLineBytes.size(); ++i)
         {
             if (_bufferPosition >= _buffer.size())
             {
                 FlushBuffer();
             }
 
-            _buffer[_bufferPosition] = newLine[i];
+            _buffer[_bufferPosition] = newLineBytes[i];
             _bufferPosition++;
         }
     }
