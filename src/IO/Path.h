@@ -8,7 +8,7 @@ namespace WCL::IO {
 class Path
 {
 public:
-    static wchar_t PathSeparator;
+    const static wchar_t DirectorySeparatorChar;
 
     static std::wstring Combine(
         const std::wstring& path1,

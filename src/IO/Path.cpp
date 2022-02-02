@@ -7,7 +7,7 @@
 
 using namespace WCL::IO;
 
-wchar_t Path::PathSeparator = L'\\';
+const wchar_t Path::DirectorySeparatorChar = L'\\';
 
 // static 
 std::wstring Path::Combine(
@@ -39,7 +39,7 @@ std::wstring_view Path::GetFileName(
     const std::wstring& path
     )
 {
-    size_t index = path.find_last_of(Path::PathSeparator);
+    size_t index = path.find_last_of(Path::DirectorySeparatorChar);
     if (index != std::wstring::npos && index + 1 < path.length())
     {
         return { &path[index + 1] };
