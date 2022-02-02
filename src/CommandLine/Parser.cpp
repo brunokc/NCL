@@ -67,9 +67,10 @@ bool Parser::GetOption(const CommandLineOption** option)
 
 void Parser::Parse()
 {
-    wchar_t* arg = *_argv;
-    while (arg != nullptr)
+    int index = _argc - 1;
+    while (index > 0)
     {
+        wchar_t* arg = *_argv;
         if (isSwitchChar(*arg))
         {
             arg++;
@@ -104,7 +105,7 @@ void Parser::Parse()
         }
 
         _argv++;
-        arg = *_argv;
+        --index;
     }
 }
 
@@ -115,7 +116,15 @@ Parser::OptionEnumerator Parser::Options()
 
 const CommandLineOption& Parser::Option(const wchar_t* optionSwitch)
 {
-    return FindOption(optionSwitch);
+    for (const auto& option : _options)
+    {
+        if (_wcsicmp(option.ShortName.c_str(), optionSwitch) == 0)
+        {
+            return option;
+        }
+    }
+
+    return _emptyOption;
 }
 
 const CommandLineOption& Parser::NonOptions()

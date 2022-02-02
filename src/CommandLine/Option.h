@@ -12,7 +12,8 @@ enum class ArgumentType
     Optional,
 };
 
-struct CommandLineOption {
+struct CommandLineOption 
+{
     CommandLineOption() = default;
     CommandLineOption(const CommandLineOption& other) = default;
     CommandLineOption(CommandLineOption&& other) = default;
@@ -28,6 +29,11 @@ struct CommandLineOption {
         ArgumentType(argumentType),
         ArgumentCount(argumentCount)
     {
+    }
+
+    operator bool() const
+    {
+        return !ShortName.empty();
     }
 
     std::wstring ShortName;
