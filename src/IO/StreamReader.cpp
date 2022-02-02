@@ -11,7 +11,7 @@
 using namespace WCL::IO;
 using namespace WCL::Text;
 
-const int BufferSize = 1 * 1024 * 1024;
+const int BufferSize = 4 * 1024;
 
 StreamReader::StreamReader(std::shared_ptr<Stream>& stream) :
     _stream(stream),
