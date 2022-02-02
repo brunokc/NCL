@@ -12,8 +12,7 @@
 
 namespace WCL::IO {
 
-class FileStream :
-	public Stream
+class FileStream : public Stream
 {
 	friend class File;
 
@@ -40,38 +39,40 @@ public:
 		FileOptions options
 		);
 
+	virtual ~FileStream() = default;
+
 	//
 	// Stream implementation
 	//
-	virtual bool CanRead();
-	virtual bool CanSeek();
-	virtual bool CanWrite();
+	virtual bool CanRead() override;
+	virtual bool CanSeek() override;
+	virtual bool CanWrite() override;
 
-	virtual int64_t Length();
-	virtual int64_t Position();
+	virtual int64_t Length() override;
+	virtual int64_t Position() override;
 
-	virtual void Close();
+	virtual void Close() override;
 
-	virtual void Flush();
+	virtual void Flush() override;
 
 	virtual int32_t Read(
 		_Out_writes_bytes_(count) BYTE* buffer,
 		int32_t count
-	);
+		) override;
 
 	virtual int64_t Seek(
 		int64_t offset,
 		SeekOrigin origin
-	);
+		) override;
 
 	virtual void SetLength(
 		int64_t length
-	);
+		) override;
 
 	virtual int32_t Write(
 		_In_reads_bytes_(count) const BYTE* buffer,
 		int32_t count
-	);
+		) override;
 
 private:
 	wil::unique_hfile _fileHandle;

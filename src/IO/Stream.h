@@ -16,6 +16,8 @@ class Stream {
 public:
 	static const Stream* Null;
 
+	virtual ~Stream() { }
+
 	virtual bool CanRead() = 0;
 	virtual bool CanSeek() = 0;
 	virtual bool CanWrite() = 0;

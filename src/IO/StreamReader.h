@@ -10,26 +10,25 @@
 
 namespace WCL::IO {
 
-class StreamReader :
-    public TextReader
+class StreamReader : public TextReader
 {
 public:
     StreamReader(std::shared_ptr<Stream>& stream);
     StreamReader(const std::wstring& fileName);
 
-    virtual void Close();
+    virtual void Close() override;
 
-    virtual int Peek();
+    virtual int Peek() override;
 
-    virtual int Read();
+    virtual int Read() override;
     virtual int Read(
         BYTE* buffer,
         int count
-        );
+        ) override;
 
-    virtual std::optional<std::wstring> ReadLine();
+    virtual std::optional<std::wstring> ReadLine() override;
 
-    virtual std::wstring ReadToEnd();
+    virtual std::wstring ReadToEnd() override;
 
 private:
     void LoadBuffer();

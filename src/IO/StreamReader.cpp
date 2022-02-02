@@ -1,20 +1,26 @@
 
 #include <algorithm>
+#include <stdexcept>
 
-#include "StreamReader.h"
 #include "FileStream.h"
 #include "Environment.h"
 #include "text/Encoding.h"
 
-const int BufferSize = 1 * 1024 * 1024;
+#include "StreamReader.h"
 
 using namespace WCL::IO;
 using namespace WCL::Text;
+
+const int BufferSize = 1 * 1024 * 1024;
 
 StreamReader::StreamReader(std::shared_ptr<Stream>& stream) :
     _stream(stream),
     _buffer(BufferSize)
 {
+    if (!stream->CanRead())
+    {
+        throw std::invalid_argument("stream not readable");
+    }
 }
 
 StreamReader::StreamReader(const std::wstring& fileName) :

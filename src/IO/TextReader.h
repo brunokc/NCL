@@ -10,6 +10,8 @@ namespace WCL::IO {
 class TextReader 
 {
 public:
+    virtual ~TextReader() { }
+
     virtual void Close() = 0;
 
     virtual int Peek() = 0;
