@@ -16,6 +16,10 @@ public:
         const std::wstring& str
         ) = 0;
 
+    virtual std::vector<uint8_t> GetBytes(
+        const wchar_t* str
+        ) = 0;
+
     virtual std::wstring GetString(
         const BYTE* bytes,
         int byteCount

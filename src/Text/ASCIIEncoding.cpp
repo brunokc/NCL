@@ -13,6 +13,14 @@ ASCIIEncoding::GetBytes(
     return WideStringToMultiByteBuffer(CP_ACP, str);
 }
 
+std::vector<uint8_t> 
+ASCIIEncoding::GetBytes(
+    const wchar_t* str
+    )
+{
+    return WideStringToMultiByteBuffer(CP_ACP, str);
+}
+
 std::wstring
 ASCIIEncoding::GetString(
     const BYTE* bytes,

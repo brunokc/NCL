@@ -17,6 +17,16 @@ UnicodeEncoding::GetBytes(
     return { p, p + strBytes };
 }
 
+std::vector<uint8_t>
+UnicodeEncoding::GetBytes(
+    const wchar_t* str
+    )
+{
+    const uint8_t* p = reinterpret_cast<const uint8_t*>(str);
+    size_t strBytes = wcslen(str) * sizeof(str[0]);
+    return { p, p + strBytes };
+}
+
 std::wstring
 UnicodeEncoding::GetString(
     const BYTE* bytes,

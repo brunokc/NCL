@@ -13,6 +13,14 @@ UTF8Encoding::GetBytes(
     return WideStringToMultiByteBuffer(CP_UTF8, str);
 }
 
+std::vector<uint8_t>
+UTF8Encoding::GetBytes(
+    const wchar_t* str
+    )
+{
+    return WideStringToMultiByteBuffer(CP_UTF8, str);
+}
+
 std::wstring
 UTF8Encoding::GetString(
     const BYTE* bytes,
