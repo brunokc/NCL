@@ -1,10 +1,15 @@
+#include <windows.h>
+#include <pathcch.h>
 
-#include "pch.h"
 #include "Path.h"
 #include "Win32Exception.h"
+#include "Util.h"
 
 using namespace WCL::IO;
 
+wchar_t Path::PathSeparator = L'\\';
+
+// static 
 std::wstring Path::Combine(
     PCWSTR path1,
     PCWSTR path2
@@ -20,10 +25,48 @@ std::wstring Path::Combine(
     return combinedPath;
 }
 
+// static 
 std::wstring Path::Combine(
     const std::wstring& path1,
     const std::wstring& path2
     )
 {
     return Combine(path1.c_str(), path2.c_str());
+}
+
+// static
+std::wstring_view Path::GetFileName(
+    const std::wstring& path
+    )
+{
+    size_t index = path.find_last_of(Path::PathSeparator);
+    if (index != std::wstring::npos && index + 1 < path.length())
+    {
+        return { &path[index + 1] };
+    }
+    else
+    {
+        return { path.data() };
+    }
+}
+
+// static 
+std::wstring Path::GetFullPath(
+    const std::wstring& path
+    )
+{
+    DWORD result = ::GetFullPathName(path.c_str(), 0, nullptr, nullptr);
+    if (result == 0)
+    {
+        throw Win32Exception(HResultFromLastError(), "failed to get file full path");
+    }
+
+    std::wstring fullPath(result, L'\0');
+    result = ::GetFullPathName(path.c_str(), result, &fullPath[0], nullptr);
+    if (result == 0)
+    {
+        throw Win32Exception(HResultFromLastError(), "failed to get file full path");
+    }
+
+    return fullPath;
 }

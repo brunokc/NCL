@@ -8,6 +8,8 @@ namespace WCL::IO {
 class Path
 {
 public:
+    static wchar_t PathSeparator;
+
     static std::wstring Combine(
         const std::wstring& path1,
         const std::wstring& path2
@@ -16,6 +18,14 @@ public:
     static std::wstring Combine(
         PCWSTR path1,
         PCWSTR path2
+        );
+
+    static std::wstring_view GetFileName(
+        const std::wstring& path
+        );
+
+    static std::wstring GetFullPath(
+        const std::wstring& path
         );
 };
 
