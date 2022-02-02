@@ -1,3 +1,4 @@
+#include <stdexcept>
 
 #include "Parser.h"
 
@@ -67,37 +68,51 @@ bool Parser::GetOption(const CommandLineOption** option)
 
 void Parser::Parse()
 {
-    int index = _argc - 1;
-    while (index > 0)
+    int argCount = _argc - 1;
+    int index = 0;
+    while (index < argCount)
     {
         wchar_t* arg = *_argv;
         if (isSwitchChar(*arg))
         {
             arg++;
             const CommandLineOption& currentOption = FindOption(arg);
-            if (!currentOption.ShortName.empty())
+            if (currentOption.ShortName.empty())
             {
-                CommandLineOption option{ currentOption };
-                if (currentOption.ArgumentType == ArgumentType::Required)
+                throw std::invalid_argument("command line option not supported");
+            }
+            
+            CommandLineOption option{ currentOption };
+            if (currentOption.ArgumentType == ArgumentType::Required ||
+                currentOption.ArgumentType == ArgumentType::Optional)
+            {
+                // Skip to argument
+                _argv++;
+                arg = *_argv;
+                index++;
+
+                if (currentOption.ArgumentCount < 1)
                 {
-                    // Skip to argument
+                    throw std::invalid_argument("option with required arguments set argument count to 0");
+                }
+
+                if (currentOption.ArgumentType == ArgumentType::Required &&
+                    argCount - index < currentOption.ArgumentCount)
+                {
+                    throw std::invalid_argument("missing required argument to command line option");
+                }
+
+                option.Arguments.reserve(currentOption.ArgumentCount);
+                for (int i = 0; i < currentOption.ArgumentCount && arg != nullptr && !isSwitchChar(*arg); ++i)
+                {
+                    option.Arguments.push_back(arg);
                     _argv++;
                     arg = *_argv;
-
-                    if (currentOption.ArgumentCount >= 1)
-                    {
-                        option.Arguments.reserve(currentOption.ArgumentCount);
-                        for (int i = 0; i < currentOption.ArgumentCount && arg != nullptr && !isSwitchChar(*arg); ++i)
-                        {
-                            option.Arguments.push_back(arg);
-                            _argv++;
-                            arg = *_argv;
-                        }
-                    }
-
-                    _options.emplace_back(std::move(option));
+                    index++;
                 }
             }
+
+            _options.emplace_back(std::move(option));
         }
         else
         {
@@ -105,7 +120,7 @@ void Parser::Parse()
         }
 
         _argv++;
-        --index;
+        index++;
     }
 }
 
