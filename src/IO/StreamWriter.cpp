@@ -24,14 +24,19 @@ StreamWriter::StreamWriter(std::shared_ptr<Stream>& stream) :
     }
 }
 
-StreamWriter::StreamWriter(const std::wstring& fileName) :
+StreamWriter::StreamWriter(const std::wstring& path) :
+    StreamWriter(path, false)
+{
+}
+
+StreamWriter::StreamWriter(const std::wstring& path, bool append) :
     _buffer(BufferSize)
 {
     _stream = std::make_shared<FileStream>(
-        fileName,
-        FileMode::OpenOrCreate,
+        path,
+        append ? FileMode::Append : FileMode::Create,
         FileAccess::ReadWrite,
-        FileShare::None,
+        FileShare::Read,
         0,
         FileOptions::None);
 }

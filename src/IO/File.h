@@ -7,6 +7,9 @@
 
 #include <Windows.h>
 
+#include "StreamReader.h"
+#include "StreamWriter.h"
+
 namespace WCL::IO {
 
 enum class FileMode 
@@ -16,7 +19,7 @@ enum class FileMode
     Open = 3,
     OpenOrCreate = 4,
     Truncate = 5,
-    //Append = 6,
+    Append = 6,
 };
 
 enum class FileAccess 
@@ -72,7 +75,11 @@ class FileStream;
 class File
 {
 public:
-    static std::shared_ptr<FileStream> Create(
+    static std::shared_ptr<StreamWriter> AppendText(
+        const std::wstring& path
+        );
+
+    static std::shared_ptr<StreamWriter> CreateText(
         const std::wstring& path
         );
 
@@ -97,6 +104,10 @@ public:
         );
 
     static std::shared_ptr<FileStream> OpenRead(
+        const std::wstring& path
+        );
+
+    static std::shared_ptr<StreamReader> OpenText(
         const std::wstring& path
         );
 

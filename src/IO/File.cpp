@@ -3,10 +3,27 @@
 #include "File.h"
 #include "FileStream.h"
 #include "StreamReader.h"
+#include "StreamWriter.h"
 #include "IOException.h"
 #include "IOHelper.h"
 
 using namespace WCL::IO;
+
+// static 
+std::shared_ptr<StreamWriter> File::AppendText(
+    const std::wstring& path
+    )
+{
+    return std::make_shared<StreamWriter>(path, /* append */ true);
+}
+
+// static 
+std::shared_ptr<StreamWriter> File::CreateText(
+    const std::wstring& path
+)
+{
+    return std::make_shared<StreamWriter>(path, /* append */ false);
+}
 
 // static 
 void File::Delete(
@@ -100,6 +117,14 @@ std::shared_ptr<FileStream> File::OpenRead(
         FileAccess::Read,
         FileShare::Read
         );
+}
+
+// static 
+std::shared_ptr<StreamReader> File::OpenText(
+    const std::wstring& path
+    )
+{
+    return std::make_shared<StreamReader>(path);
 }
 
 // static 

@@ -13,7 +13,8 @@ class StreamWriter : public TextWriter
 {
 public:
     StreamWriter(std::shared_ptr<Stream>& stream);
-    StreamWriter(const std::wstring& fileName);
+    StreamWriter(const std::wstring& path);
+    StreamWriter(const std::wstring& path, bool append);
     virtual ~StreamWriter();
 
     virtual void Close() override;
