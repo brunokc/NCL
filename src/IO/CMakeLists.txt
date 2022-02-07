@@ -1,10 +1,16 @@
 add_library(wcl_io OBJECT 
 	Directory.cpp 
 	Directory.h 
+	DirectoryInfo.cpp
+	DirectoryInfo.h
 	File.cpp 
 	File.h 
+	FileInfo.cpp
+	FileInfo.h
 	FileStream.cpp 
 	FileStream.h
+	FileSystemInfo.cpp
+	FileSystemInfo.h
 	IOException.h 
 	IOHelper.cpp
 	IOHelper.h
@@ -17,7 +23,7 @@ add_library(wcl_io OBJECT
 	StreamWriter.h
 	TextReader.h
 	TextWriter.h
- )
+)
 
 # Add to lib dependencies:
 # Pathcch.lib
