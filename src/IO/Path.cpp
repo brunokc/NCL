@@ -35,6 +35,38 @@ std::wstring Path::Combine(
 }
 
 // static
+std::wstring_view Path::GetDirectoryName(
+    const std::wstring& path
+    )
+{
+    size_t index = path.find_last_of(Path::DirectorySeparatorChar);
+    if (index != std::wstring::npos && index - 1 > 0)
+    {
+        return { path.data(), &path[index - 1]};
+    }
+    else
+    {
+        return { path.data() };
+    }
+}
+
+// static
+std::wstring_view Path::GetExtension(
+    const std::wstring& path
+    )
+{
+    size_t index = path.find_last_of(L'.');
+    if (index != std::wstring::npos)
+    {
+        return { &path[index] };
+    }
+    else
+    {
+        return { };
+    }
+}
+
+// static
 std::wstring_view Path::GetFileName(
     const std::wstring& path
     )
@@ -69,4 +101,24 @@ std::wstring Path::GetFullPath(
     }
 
     return fullPath;
+}
+
+// static
+std::wstring_view Path::GetPathRoot(
+    const std::wstring& path
+    )
+{
+    if (path.empty())
+    {
+        return { };
+    }
+
+    PCWSTR rootEnd = nullptr;
+    HRESULT hr = ::PathCchSkipRoot(path.c_str(), &rootEnd);
+    if (FAILED(hr))
+    {
+        throw Win32Exception(hr, "failed to find path root");
+    }
+
+    return { path.c_str(), static_cast<size_t>(rootEnd - path.c_str()) };
 }

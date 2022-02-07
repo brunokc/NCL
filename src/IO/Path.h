@@ -20,11 +20,23 @@ public:
         PCWSTR path2
         );
 
+    static std::wstring_view GetDirectoryName(
+        const std::wstring& path
+        );
+
+    static std::wstring_view GetExtension(
+        const std::wstring& path
+        );
+
     static std::wstring_view GetFileName(
         const std::wstring& path
         );
 
     static std::wstring GetFullPath(
+        const std::wstring& path
+        );
+
+    static std::wstring_view GetPathRoot(
         const std::wstring& path
         );
 };
