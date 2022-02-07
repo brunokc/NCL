@@ -2,22 +2,22 @@
 
 namespace WCL::Collections {
 
-template<class C, class E>
+template<class E>
 struct IEnumerator
 {
-    virtual bool operator!=(const C& other) = 0;
+    virtual bool operator!=(const IEnumerator<E>& other) = 0;
 
-    virtual IEnumerator<C, E>& operator++() = 0;
+    virtual IEnumerator<E>& operator++() = 0;
 
     virtual E& operator*() = 0;
 };
 
-template<class C, class E>
+template<class E>
 struct IEnumerable
 {
-    virtual IEnumerator<C, E>& begin() = 0;
+    virtual IEnumerator<E>& begin() = 0;
 
-    virtual IEnumerator<C, E>& end() = 0;
+    virtual IEnumerator<E>& end() = 0;
 };
 
 } // namespace WCL::Collections

@@ -52,19 +52,12 @@ Directory::DirectoryContentIterator::DirectoryContentIterator(
 {
 }
 
-//bool Directory::DirectoryContentIterator::operator==(
-//    const Directory::DirectoryContentIterator& other
-//    )
-//{
-//    return wcscmp(_findData.cFileName, other._findData.cFileName) == 0;
-//}
-
 bool Directory::DirectoryContentIterator::operator!=(
-    const Directory::DirectoryContentIterator& other
+    const IEnumerator<std::wstring>& other
     )
 {
-    // return !(*this == other);
-    return wcscmp(_findData.cFileName, other._findData.cFileName) != 0;
+    const auto& o = static_cast<const Directory::DirectoryContentIterator&>(other);
+    return wcscmp(_findData.cFileName, o._findData.cFileName) != 0;
 }
 
 std::wstring& Directory::DirectoryContentIterator::operator*()

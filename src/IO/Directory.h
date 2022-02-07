@@ -28,7 +28,7 @@ public:
 
 private:
     class DirectoryContentIterator : 
-        public WCL::Collections::IEnumerator<DirectoryContentIterator, std::wstring>
+        public WCL::Collections::IEnumerator<std::wstring>
     {
     public:
         DirectoryContentIterator(
@@ -51,7 +51,7 @@ private:
             ) noexcept;
 
         bool operator!=(
-            const DirectoryContentIterator& other
+            const IEnumerator<std::wstring>& other
             ) override;
 
         std::wstring& operator*() override;
@@ -73,7 +73,7 @@ private:
 
 //public:
     class DirectoryEnumerator : 
-        public WCL::Collections::IEnumerable<DirectoryContentIterator, std::wstring>
+        public WCL::Collections::IEnumerable<std::wstring>
     {
         friend class Directory;
 
@@ -93,7 +93,7 @@ private:
     };
 
     class FileEnumerator : 
-        public WCL::Collections::IEnumerable<DirectoryContentIterator, std::wstring>
+        public WCL::Collections::IEnumerable<std::wstring>
     {
         friend class Directory;
 
