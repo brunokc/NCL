@@ -22,6 +22,13 @@ FileStream::FileStream(
 	// bufferSize is unused for now
 	bufferSize;
 
+	bool append = false;
+	if (fileMode == FileMode::Append)
+	{
+		fileMode = FileMode::OpenOrCreate;
+		append = true;
+	}
+
 	_fileHandle = IOHelper::Open(
 		path,
 		static_cast<DWORD>(fileAccess),
@@ -29,6 +36,11 @@ FileStream::FileStream(
 		static_cast<DWORD>(fileMode),
 		FILE_ATTRIBUTE_NORMAL | static_cast<DWORD>(fileOptions)
 		);
+
+	if (append)
+	{
+		Seek(0, SeekOrigin::End);
+	}
 }
 
 bool FileStream::CanRead()
@@ -49,7 +61,6 @@ bool FileStream::CanWrite()
 int64_t FileStream::Length()
 {
 	LARGE_INTEGER fileSize{ };
-
 	BOOL success = ::GetFileSizeEx(_fileHandle.get(), &fileSize);
 	if (!success)
 	{
