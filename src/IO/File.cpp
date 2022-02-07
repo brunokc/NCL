@@ -106,40 +106,6 @@ FILETIME File::GetLastWriteTime(
     return ft;
 }
 
-// static 
-std::shared_ptr<FileStream> File::OpenRead(
-    const std::wstring& path
-    )
-{
-    return Open(
-        path,
-        FileMode::Open,
-        FileAccess::Read,
-        FileShare::Read
-        );
-}
-
-// static 
-std::shared_ptr<StreamReader> File::OpenText(
-    const std::wstring& path
-    )
-{
-    return std::make_shared<StreamReader>(path);
-}
-
-// static 
-std::shared_ptr<FileStream> File::OpenWrite(
-    const std::wstring& path
-    )
-{
-    return Open(
-        path,
-        FileMode::OpenOrCreate,
-        FileAccess::ReadWrite,
-        FileShare::None
-        );
-}
-
 // static
 std::shared_ptr<FileStream> File::Open(
     const std::wstring& path,
@@ -186,6 +152,40 @@ std::shared_ptr<FileStream> File::Open(
         );
 
     return FileStream::Make(std::move(handle));
+}
+
+// static 
+std::shared_ptr<FileStream> File::OpenRead(
+    const std::wstring& path
+)
+{
+    return Open(
+        path,
+        FileMode::Open,
+        FileAccess::Read,
+        FileShare::Read
+    );
+}
+
+// static 
+std::shared_ptr<StreamReader> File::OpenText(
+    const std::wstring& path
+)
+{
+    return std::make_shared<StreamReader>(path);
+}
+
+// static 
+std::shared_ptr<FileStream> File::OpenWrite(
+    const std::wstring& path
+)
+{
+    return Open(
+        path,
+        FileMode::OpenOrCreate,
+        FileAccess::Write,
+        FileShare::None
+    );
 }
 
 // static 

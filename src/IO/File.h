@@ -72,7 +72,7 @@ enum class FileAttributes
 
 class FileStream;
 
-class File
+class File final
 {
 public:
     static std::shared_ptr<StreamWriter> AppendText(
@@ -103,18 +103,6 @@ public:
         const std::wstring& path
         );
 
-    static std::shared_ptr<FileStream> OpenRead(
-        const std::wstring& path
-        );
-
-    static std::shared_ptr<StreamReader> OpenText(
-        const std::wstring& path
-        );
-
-    static std::shared_ptr<FileStream> OpenWrite(
-        const std::wstring& path
-        );
-
     static std::shared_ptr<FileStream> Open(
         const std::wstring& path,
         FileMode fileMode
@@ -131,6 +119,18 @@ public:
         FileMode fileMode,
         FileAccess fileAccess,
         FileShare fileShare
+        );
+
+    static std::shared_ptr<FileStream> OpenRead(
+        const std::wstring& path
+        );
+
+    static std::shared_ptr<StreamReader> OpenText(
+        const std::wstring& path
+        );
+
+    static std::shared_ptr<FileStream> OpenWrite(
+        const std::wstring& path
         );
 
     //static WCL::Collections::IEnumerable<File, std::wstring> ReadLines();
