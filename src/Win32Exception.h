@@ -5,18 +5,16 @@
 
 namespace WCL {
 
-class Win32Exception :
-    public Exception
+class Win32Exception : public Exception
 {
 public:
     explicit Win32Exception(HRESULT hr, const char* msg) :
         Exception(msg),
-        _hr(hr)
+        hr(hr)
     {
     }
 
-private:
-    HRESULT _hr;
+    HRESULT hr;
 };
 
 } // namespace WCL
