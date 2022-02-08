@@ -2,7 +2,7 @@
 
 namespace WCL::Collections {
 
-template<class E>
+template<typename E>
 struct IEnumerator
 {
     virtual bool operator!=(const IEnumerator<E>& other) = 0;
@@ -12,7 +12,7 @@ struct IEnumerator
     virtual E& operator*() = 0;
 };
 
-template<class E>
+template<typename E>
 struct IEnumerable
 {
     virtual IEnumerator<E>& begin() = 0;
