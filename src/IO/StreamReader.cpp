@@ -35,6 +35,21 @@ StreamReader::StreamReader(const std::wstring& fileName) :
         FileOptions::None);
 }
 
+StreamReader::~StreamReader()
+{
+    Close();
+}
+
+std::shared_ptr<Stream> StreamReader::BaseStream()
+{
+    return _stream;
+}
+
+bool StreamReader::EndOfStream()
+{
+    return (_index >= _dataSize && _eof);
+}
+
 void StreamReader::Close()
 {
     _stream->Close();
@@ -100,7 +115,7 @@ std::optional<std::wstring> StreamReader::ReadLine()
     std::wstring line;
     while (true)
     {
-        if (_index >= _dataSize && _eof)
+        if (EndOfStream())
         {
             break;
         }

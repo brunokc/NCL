@@ -15,6 +15,10 @@ class StreamReader : public TextReader
 public:
     StreamReader(std::shared_ptr<Stream>& stream);
     StreamReader(const std::wstring& fileName);
+    virtual ~StreamReader();
+
+    std::shared_ptr<Stream> BaseStream();
+    bool EndOfStream();
 
     virtual void Close() override;
 
