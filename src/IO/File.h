@@ -7,10 +7,80 @@
 
 #include <Windows.h>
 
+#include <collections/IEnumerable.h>
+
 #include "StreamReader.h"
 #include "StreamWriter.h"
 
 namespace WCL::IO {
+
+namespace details {
+
+class FileContentIterator :
+    public WCL::Collections::IEnumerator<std::wstring>
+{
+public:
+    FileContentIterator() = default;
+
+    FileContentIterator(const std::wstring& path)
+    {
+        if (!path.empty())
+        {
+            _streamReader = std::make_shared<StreamReader>(path);
+            _currentLine = _streamReader->ReadLine();
+        }
+    }
+
+    bool operator!=(const IEnumerator<std::wstring>&) override
+    {
+        // TODO: this is not the proper way to check if we've reached the end() iterator, 
+        // but it will work as long we assume end() points to the end of the file.
+        //const auto& o = static_cast<const FileContentIterator&>(other);
+        return !_streamReader->EndOfStream();
+    }
+
+    std::wstring& operator*() override
+    {
+        return _currentLine.value();
+    }
+
+    FileContentIterator& operator++() override
+    {
+        _currentLine = _streamReader->ReadLine();
+        return *this;
+    }
+
+private:
+    std::shared_ptr<StreamReader> _streamReader;
+    std::optional<std::wstring> _currentLine;
+};
+
+class FileContentEnumerator :
+    public WCL::Collections::IEnumerable<std::wstring>
+{
+public:
+    FileContentEnumerator(const std::wstring& path) :
+        _begin(path),
+        _end()
+    {
+    }
+
+    FileContentIterator& begin()
+    {
+        return _begin;
+    }
+
+    FileContentIterator& end()
+    {
+        return _end;
+    }
+
+private:
+    FileContentIterator _begin;
+    FileContentIterator _end;
+};
+
+} // namespace details
 
 enum class FileMode 
 {
@@ -133,9 +203,11 @@ public:
         const std::wstring& path
         );
 
-    //static WCL::Collections::IEnumerable<File, std::wstring> ReadLines();
-
     static std::vector<std::wstring> ReadAllLines(
+        const std::wstring& path
+        );
+
+    static details::FileContentEnumerator ReadLines(
         const std::wstring& path
         );
 

@@ -178,7 +178,7 @@ std::shared_ptr<StreamReader> File::OpenText(
 // static 
 std::shared_ptr<FileStream> File::OpenWrite(
     const std::wstring& path
-)
+    )
 {
     return Open(
         path,
@@ -186,6 +186,14 @@ std::shared_ptr<FileStream> File::OpenWrite(
         FileAccess::Write,
         FileShare::None
     );
+}
+
+// static 
+details::FileContentEnumerator File::ReadLines(
+    const std::wstring& path
+    )
+{
+    return details::FileContentEnumerator(path);
 }
 
 // static 
