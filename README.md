@@ -1,4 +1,4 @@
-# WCL
+# WCL - Windows Class Library
 
 A C++ library aimed at making day-to-day tasks easier to do. The API is based
 the .NET Base Class Library (BCL) where it makes sense, while maintaining some
