@@ -60,6 +60,10 @@ public:
 		int32_t count
 		) override;
 
+	virtual int32_t Read(
+		std::vector<BYTE>& buffer
+		) override;
+
 	virtual int64_t Seek(
 		int64_t offset,
 		SeekOrigin origin
@@ -74,8 +78,24 @@ public:
 		int32_t count
 		) override;
 
+	virtual int32_t Write(
+		const std::vector<BYTE>& buffer
+		) override;
+
 private:
 	wil::unique_hfile _fileHandle;
 };
+
+template<typename T>
+int32_t ReadFromStream(std::shared_ptr<FileStream>& stream, T& object)
+{
+	return stream->Read(reinterpret_cast<BYTE*>(&object), sizeof(T));
+}
+
+template<typename T>
+int32_t WriteToStream(std::shared_ptr<FileStream>& stream, const T& object)
+{
+	return stream->Write(reinterpret_cast<const BYTE*>(&object), sizeof(T));
+}
 
 } // namespace WCL::IO

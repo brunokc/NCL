@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <vector>
+
 #include <windows.h>
 
 namespace WCL::IO {
@@ -34,6 +36,10 @@ public:
 		int32_t count
 		) = 0;
 
+	virtual int32_t Read(
+		std::vector<BYTE>& buffer
+		) = 0;
+
 	virtual int64_t Seek(
 		int64_t offset,
 		SeekOrigin origin
@@ -46,6 +52,10 @@ public:
 	virtual int32_t Write(
 		const BYTE* buffer,
 		int32_t count
+		) = 0;
+
+	virtual int32_t Write(
+		const std::vector<BYTE>& buffer
 		) = 0;
 };
 

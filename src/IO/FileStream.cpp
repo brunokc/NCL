@@ -110,6 +110,13 @@ int32_t FileStream::Read(
 	return numberOfBytesRead;
 }
 
+int32_t FileStream::Read(
+	std::vector<BYTE>& buffer
+	)
+{
+	return Read(buffer.data(), static_cast<int32_t>(buffer.size()));
+}
+
 int64_t FileStream::Seek(
 	int64_t offset,
 	SeekOrigin origin
@@ -164,4 +171,11 @@ int32_t FileStream::Write(
 	}
 
 	return numberOfBytesWritten;
+}
+
+int32_t FileStream::Write(
+	const std::vector<BYTE>& buffer
+	)
+{
+	return Write(buffer.data(), static_cast<int32_t>(buffer.size()));
 }
