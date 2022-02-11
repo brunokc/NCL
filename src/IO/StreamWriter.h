@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "text/Encoding.h"
+
 #include "Stream.h"
 #include "TextWriter.h"
 
@@ -65,6 +67,7 @@ private:
     std::shared_ptr<Stream> _stream;
     std::vector<BYTE> _buffer;
     int _bufferPosition = 0;
+    std::shared_ptr<WCL::Text::Encoding> _encoding;
 };
 
 } // namespace WCL::IO

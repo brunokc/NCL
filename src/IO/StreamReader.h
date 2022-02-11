@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+#include "text/Encoding.h"
+
 #include "Stream.h"
 #include "TextReader.h"
 
@@ -43,6 +45,7 @@ private:
     int _dataSize = 0;
     int _index = 0;
     bool _eof = false;
+    std::shared_ptr<WCL::Text::Encoding> _encoding;
 };
 
 }

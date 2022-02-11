@@ -1,11 +1,12 @@
 #include <stdexcept>
 #include <windows.h>
 
-#include "File.h"
-#include "FileStream.h"
 #include "Environment.h"
 #include "text/Encoding.h"
+#include "text/UTF8Encoding.h"
 
+#include "File.h"
+#include "FileStream.h"
 #include "StreamWriter.h"
 
 using namespace WCL;
@@ -22,6 +23,8 @@ StreamWriter::StreamWriter(std::shared_ptr<Stream>& stream) :
     {
         throw std::invalid_argument("stream not writable");
     }
+
+    _encoding = std::make_shared<UTF8Encoding>();
 }
 
 StreamWriter::StreamWriter(const std::wstring& path) :
@@ -39,6 +42,8 @@ StreamWriter::StreamWriter(const std::wstring& path, bool append) :
         FileShare::Read,
         0,
         FileOptions::None);
+
+    _encoding = std::make_shared<UTF8Encoding>();
 }
 
 StreamWriter::~StreamWriter()
@@ -137,7 +142,7 @@ void StreamWriter::vWriteBuffer(
 
     vswprintf_s(buffer, std::size(buffer), format, args);
 
-    auto bytes = Encoding::UTF8->GetBytes(buffer);
+    auto bytes = _encoding->GetBytes(buffer);
     WriteBuffer(bytes.data(), static_cast<int>(bytes.size()), appendNewLine);
 }
 
@@ -164,7 +169,7 @@ void StreamWriter::WriteBuffer(
 
     if (appendNewLine)
     {
-        auto newLineBytes = Encoding::UTF8->GetBytes(Environment::NewLine);
+        auto newLineBytes = _encoding->GetBytes(Environment::NewLine);
         for (int i = 0; i < newLineBytes.size(); ++i)
         {
             if (_bufferPosition >= _buffer.size())

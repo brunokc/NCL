@@ -2,10 +2,11 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "FileStream.h"
 #include "Environment.h"
 #include "text/Encoding.h"
+#include "text/UTF8Encoding.h"
 
+#include "FileStream.h"
 #include "StreamReader.h"
 
 using namespace WCL::IO;
@@ -21,6 +22,8 @@ StreamReader::StreamReader(std::shared_ptr<Stream>& stream) :
     {
         throw std::invalid_argument("stream not readable");
     }
+
+    _encoding = std::make_shared<UTF8Encoding>();
 }
 
 StreamReader::StreamReader(const std::wstring& fileName) :
@@ -33,6 +36,8 @@ StreamReader::StreamReader(const std::wstring& fileName) :
         FileShare::Read,
         0,
         FileOptions::None);
+
+    _encoding = std::make_shared<UTF8Encoding>();
 }
 
 StreamReader::~StreamReader()
@@ -110,7 +115,7 @@ std::optional<std::wstring> StreamReader::ReadLine()
     }
 
     // Default enconding is UTF-8
-    std::vector<BYTE> newLine = Encoding::UTF8->GetBytes(Environment::NewLine);
+    std::vector<BYTE> newLine = _encoding->GetBytes(Environment::NewLine);
 
     std::wstring line;
     while (true)
@@ -126,7 +131,7 @@ std::optional<std::wstring> StreamReader::ReadLine()
             int newIndex = static_cast<int>(it - _buffer.begin());
             if (newIndex > _index)
             {
-                auto encodedText = Encoding::UTF8->GetString(&_buffer[_index], newIndex - _index);
+                auto encodedText = _encoding->GetString(&_buffer[_index], newIndex - _index);
                 line.append(encodedText);
             }
 
