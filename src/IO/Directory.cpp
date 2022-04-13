@@ -23,15 +23,22 @@ Directory::DirectoryContentIterator::DirectoryContentIterator(
         ) };
     if (!handle)
     {
-        throw IOException("Failed to enumerate path");
+        DWORD error = ::GetLastError();
+        if (error != ERROR_FILE_NOT_FOUND)
+        {
+            throw IOException("Failed to enumerate path");
+        }
     }
 
     _handle = std::move(handle);
 
-    // Skip entries of the wrong type
-    while (!IsEntryOfRightType())
+    if (_handle)
     {
-        MoveNext();
+        // Skip entries of the wrong type
+        while (!IsEntryOfRightType())
+        {
+            MoveNext();
+        }
     }
 }
 
@@ -92,6 +99,11 @@ bool Directory::DirectoryContentIterator::IsEntryOfRightType()
 
 void Directory::DirectoryContentIterator::MoveNext()
 {
+    if (!_handle)
+    {
+        return;
+    }
+
     do
     {
         _findData = { };
