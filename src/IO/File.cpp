@@ -238,7 +238,7 @@ void File::SetCreationTime(
     wil::unique_hfile file = IOHelper::Open(
         path,
         FILE_WRITE_ATTRIBUTES,
-        0,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
         OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL
         );
@@ -258,7 +258,7 @@ void File::SetLastWriteTime(
     wil::unique_hfile file = IOHelper::Open(
         path,
         FILE_WRITE_ATTRIBUTES,
-        0,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
         OPEN_EXISTING,
         FILE_ATTRIBUTE_NORMAL
         );
