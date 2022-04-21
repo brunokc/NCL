@@ -7,6 +7,7 @@ include_directories(. ${WIL_SOURCE_DIR}/include)
 
 add_subdirectory(commandline)
 add_subdirectory(io)
+add_subdirectory(security)
 add_subdirectory(text)
 add_subdirectory(threading)
 add_subdirectory(unittests)
@@ -22,6 +23,7 @@ add_library(WCL STATIC
 target_link_libraries(WCL PRIVATE 
     wcl_commandline 
     wcl_io 
+    wcl_cryptography
     wcl_text
     wcl_threading
 )
