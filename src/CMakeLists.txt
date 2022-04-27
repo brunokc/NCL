@@ -10,7 +10,7 @@ add_subdirectory(io)
 add_subdirectory(security)
 add_subdirectory(text)
 add_subdirectory(threading)
-add_subdirectory(unittests)
+add_subdirectory(tests)
 
 # Add source to this project's executable.
 add_library(WCL STATIC 
