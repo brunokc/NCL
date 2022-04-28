@@ -15,7 +15,9 @@ add_library(wcl_io OBJECT
 	IOHelper.cpp
 	IOHelper.h
 	MemoryMappedFiles/MemoryMappedFile.cpp
+	MemoryMappedFiles/MemoryMappedFile.h
 	MemoryMappedFiles/MemoryMappedViewAccessor.cpp
+	MemoryMappedFiles/MemoryMappedViewAccessor.h
 	Path.cpp 
 	Path.h 
 	Stream.h
