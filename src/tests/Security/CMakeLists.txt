@@ -2,7 +2,7 @@ add_executable(SecurityTests
     HashTests.cpp
 )
 
-target_link_libraries(SecurityTests PUBLIC 
+target_link_libraries(SecurityTests PRIVATE 
     WCL 
     Catch2::Catch2
 )
