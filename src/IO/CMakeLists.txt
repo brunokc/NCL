@@ -14,6 +14,8 @@ add_library(wcl_io OBJECT
 	IOException.h 
 	IOHelper.cpp
 	IOHelper.h
+	MemoryMappedFiles/MemoryMappedFile.cpp
+	MemoryMappedFiles/MemoryMappedViewAccessor.cpp
 	Path.cpp 
 	Path.h 
 	Stream.h

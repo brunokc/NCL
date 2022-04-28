@@ -11,5 +11,6 @@ list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/contrib)
 
 enable_testing()
 
+add_subdirectory(io)
 add_subdirectory(security)
 add_subdirectory(threading)
