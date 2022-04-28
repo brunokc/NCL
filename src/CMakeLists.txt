@@ -3,7 +3,20 @@ configure_file(WCLConfig.h.in WCLConfig.h)
 #                           "${PROJECT_BINARY_DIR}"
 #                           )
 
-include_directories(. ${WIL_SOURCE_DIR}/include)
+include(FetchContent)
+
+FetchContent_Declare(
+	wil
+	GIT_REPOSITORY https://github.com/microsoft/wil.git
+	GIT_TAG f9284c19c9873664978b873b8858d7dfacc6af1e # Dec 11, 2021
+)
+
+set(WIL_BUILD_PACKAGING OFF CACHE INTERNAL "Disable WIL packaging")
+set(WIL_BUILD_TESTS OFF CACHE INTERNAL "Disable WIL tests")
+
+FetchContent_MakeAvailable(wil)
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(commandline)
 add_subdirectory(io)
@@ -18,7 +31,12 @@ add_library(WCL STATIC
     Environment.cpp
     WCL.cpp
     WCL.h
-)
+ )
+add_library(${PROJECT_NAME}::WCL ALIAS WCL)
+target_compile_features(WCL PUBLIC cxx_std_20)
+
+# Add a public dependency on WIL so that anybody that pulls in our library will also pull in WIL
+target_link_libraries(WCL PUBLIC WIL::WIL)
 
 target_link_libraries(WCL PRIVATE 
     wcl_commandline 

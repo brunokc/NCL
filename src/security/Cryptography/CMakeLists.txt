@@ -14,5 +14,6 @@ add_library(wcl_cryptography OBJECT
 )
 
 target_link_libraries(wcl_cryptography PRIVATE 
+	WIL::WIL
 	bcrypt.lib
 )

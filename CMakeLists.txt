@@ -17,5 +17,4 @@ endif()
 
 add_compile_definitions(UNICODE _UNICODE NOMINMAX)
 
-add_subdirectory(dependencies)
 add_subdirectory(src)

@@ -23,7 +23,6 @@ add_library(wcl_io OBJECT
 	StreamWriter.h
 	TextReader.h
 	TextWriter.h
-)
+ )
 
-# Add to lib dependencies:
-# Pathcch.lib
+target_link_libraries(wcl_io PRIVATE WIL::WIL)
