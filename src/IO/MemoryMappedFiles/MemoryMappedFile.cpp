@@ -193,7 +193,6 @@ std::shared_ptr<MemoryMappedFile> MemoryMappedFile::CreateNew(
         (mapName.empty() ? nullptr : mapName.c_str())
         );
 
-    //return Make(std::move(mapping));
     return std::make_shared<MemoryMappedFile>(
         private_marker{}, 
         std::move(fileMapping), 
