@@ -84,11 +84,29 @@ private:
 
 enum class FileMode 
 {
+    // Creates a new file, always.
+    // If the specified file exist sand is writable, the function overwrites the file.
     CreateNew = 1,
+
+    // Creates a new file, only if it does not already exist.
+    // If the specified file exists, the function fails.
     Create = 2,
+
+    // Opens a file or device, only if it exists.
+    // If the specified file or device does not exist, the function fails.
     Open = 3,
+
+    // Opens a file, always.
+    // If the specified file exists, the function succeed.
+    // If the specified file does not exist and is a valid path to a writable location, 
+    // a file is created.
     OpenOrCreate = 4,
+
+    // Opens a fileand truncates it so that its size is zero bytes, only if it exists.
+    // If the specified file does not exist, the function fails.
     Truncate = 5,
+
+    // (No equivalent in CreateFile(), so don't use it for now)
     Append = 6,
 };
 
