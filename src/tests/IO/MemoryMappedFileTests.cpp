@@ -16,7 +16,8 @@ using namespace WCL::IO;
 using namespace WCL::IO::MemoryMappedFiles;
 using namespace WCL::Text;
 
-TEST_CASE("Read a small file using memory mapping", "[io]") {
+TEST_CASE("Read a small file using memory mapping", "[io]") 
+{
     const auto stringData = std::wstring{ L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" };
 
     auto memoryMappedFile = MemoryMappedFile::CreateFromFile(
@@ -30,9 +31,19 @@ TEST_CASE("Read a small file using memory mapping", "[io]") {
     REQUIRE(accessor != nullptr);
 
     BYTE stringBytes[256] = { };
-    int bytesRead = accessor->ReadArray<BYTE>(0, stringBytes, 36);
-    REQUIRE(bytesRead == stringData.size());
+    int bytesRead = accessor->ReadArray<BYTE>(0, stringBytes, 10);
+    REQUIRE(bytesRead == 10);
 
-    auto readString = Encoding::UTF8->GetString(stringBytes, bytesRead);
+    auto numbers = Encoding::UTF8->GetString(stringBytes, bytesRead);
+    REQUIRE(numbers == stringData.substr(0, 10));
+
+    ZeroMemory(stringBytes, std::size(stringBytes));
+    bytesRead = accessor->ReadArray<BYTE>(10, stringBytes, 26);
+    REQUIRE(bytesRead == 26);
+
+    auto letters = Encoding::UTF8->GetString(stringBytes, bytesRead);
+    REQUIRE(letters == stringData.substr(10, 26));
+
+    auto readString = numbers + letters;
     REQUIRE(readString == stringData);
 }
