@@ -23,8 +23,8 @@ ThreadProc(
         int sleepTime = distribution(generator);
         Sleep(sleepTime * 1000);
 
-        wprintf(L"Setting handle 0x%#p (sleep time: %ds)\n", event->Get(), sleepTime);
-        SetEvent(event->Get());
+        wprintf(L"Setting handle 0x%#p (sleep time: %ds)\n", event->get(), sleepTime);
+        SetEvent(event->get());
         Sleep(10);
     }
 

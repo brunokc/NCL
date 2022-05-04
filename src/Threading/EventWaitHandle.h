@@ -1,9 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-///////////////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include "WaitHandle.h"
@@ -31,10 +25,6 @@ class EventWaitHandle :
 {
 protected:
     explicit EventWaitHandle() = default;
-
-    // explicit EventWaitHandle(
-    //     Traits::Type&& h
-    //     );
 
 public:
     EventWaitHandle(

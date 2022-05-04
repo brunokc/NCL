@@ -1,23 +1,8 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-#pragma once
-
 #include "EventWaitHandle.h"
 #include "Win32Exception.h"
 #include "Util.h"
 
 using namespace WCL::Threading;
-
-// EventWaitHandle::EventWaitHandle(
-//     Traits::Type&& h
-//     ) :
-//     WaitHandle(std::move(h))
-// {
-// }
 
 EventWaitHandle::EventWaitHandle(
     EventWaitHandle&& h
@@ -100,29 +85,20 @@ EventWaitHandle::Initialize(
     _In_opt_ PCWSTR name
     )
 {
-    DWORD flags = 0;
-    EventWaitHandle handle;
+    wil::EventOptions options = wil::EventOptions::None;
 
     if (eventType == EventType::Manual)
     {
-        flags |= CREATE_EVENT_MANUAL_RESET;
+        options |= wil::EventOptions::ManualReset;
     }
 
     if (initialState == EventInitialState::Signaled)
     {
-        flags |= CREATE_EVENT_INITIAL_SET;
+        options |= wil::EventOptions::Signaled;
     }
 
-    handle.reset(::CreateEventEx(
-        nullptr,
-        name,
-        flags,
-        EVENT_ALL_ACCESS
-        ));
-    if (!handle)
+    if (!try_create(options, name))
     {
         throw Win32Exception(HResultFromLastError(), "CreateEventEx failed");
     }
-
-    *this = std::move(handle);
 }

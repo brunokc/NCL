@@ -1,24 +1,8 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-#pragma once
-
-#include "pch.h"
 #include "WaitHandle.h"
 #include "Win32Exception.h"
 #include "Util.h"
 
 using namespace WCL::Threading;
-
-// WaitHandle::WaitHandle(
-//     Traits::Type&& h
-//     ) :
-//     Event(std::move(h))
-// {
-// }
 
 WaitHandle::WaitHandle(
     WaitHandle&& h
@@ -35,10 +19,10 @@ WaitHandle& WaitHandle::operator=(
     return *this;
 }
 
-HANDLE WaitHandle::Get() const
-{
-    return get();
-}
+//HANDLE WaitHandle::Get() const
+//{
+//    return get();
+//}
 
 bool WaitHandle::Wait(
     DWORD timeout

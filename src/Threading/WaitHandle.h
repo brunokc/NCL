@@ -1,13 +1,6 @@
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright (C) Microsoft Corporation. All rights reserved.
-//
-///////////////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 #include <windows.h>
-//#include <wrl/wrappers/corewrappers.h>
 #include <wil/resource.h>
 
 namespace WCL::Threading {
@@ -34,7 +27,7 @@ public:
         WaitHandle&& h
         ) noexcept;
 
-    HANDLE Get() const;
+    //HANDLE Get() const;
 
     bool Wait(
         DWORD timeout

@@ -1,22 +1,15 @@
-//
-// Copyright (c) Microsoft Corporation.  All rights reserved.
-//
-
 #pragma once
 
 #include <memory>
 #include <type_traits>
-#include <wil/resources.h>
+#include <wil/resource.h>
 
 namespace WCL::Threading {
 
 // CreateThreadFromLambda: allow for the creation of a thread while passing any lambda, including
 // the ones with non-empty captures.
 template<typename TLambda>
-wil::unique_handle
-CreateThreadFromLambda(
-    TLambda&& lambda
-    )
+wil::unique_handle CreateThread(TLambda&& lambda)
 {
     // When l-values are passed in, TLambda will be a reference (e.g.: SomeFunction::<lambda_XYZ>&)
     // We can't create pointers to references, so we'll remove the reference from the type first.
@@ -34,8 +27,8 @@ CreateThreadFromLambda(
     };
 
     // Create a copy of the lambda on the heap so we can pass it by reference to threadProc
-    // std::unique_ptr<LambdaType> pLambda(new LambdaType(std::forward<TLambda>(lambda)));
-    auto pLambda = std::make_unique<LambdaType>(std::forward<TLambda>(lambda)));
+    //std::unique_ptr<LambdaType> pLambda(new LambdaType(std::forward<TLambda>(lambda)));
+    auto pLambda = std::make_unique<LambdaType>(std::forward<TLambda>(lambda));
 
     wil::unique_handle threadHandle(::CreateThread(
         nullptr,
@@ -54,14 +47,11 @@ CreateThreadFromLambda(
     return threadHandle;
 }
 
-template <typename TLambda>
-void
-RunOnThreadpoolFromLambda(
-    TLambda&& lambda
-    )
+template<typename TLambda>
+void RunOnThreadpool(TLambda&& lambda)
 {
     // When l-values are passed in, TLambda will be a reference (e.g.: SomeFunction::<lambda_XYZ>&)
-    // When can't create pointers to references, so we'll remove the reference from the type first.
+    // We can't create pointers to references, so we'll remove the reference from the type first.
     using LambdaType = std::remove_reference<TLambda>::type;
 
     // The thread proc lambda needs to have an empty capture so it can be converted into a function
@@ -73,15 +63,16 @@ RunOnThreadpoolFromLambda(
     };
 
     // Create a copy of the lambda on the heap so we can pass it by reference to threadProc
-    // std::unique_ptr<LambdaType> pLambda(new LambdaType(std::forward<TLambda>(lambda)));
-    auto pLambda = std::make_unique<LambdaType>(std::forward<TLambda>(lambda)));
+    //std::unique_ptr<LambdaType> pLambda(new LambdaType(std::forward<TLambda>(lambda)));
+    auto pLambda = std::make_unique<LambdaType>(std::forward<TLambda>(lambda));
 
-    FAIL_FAST_IF_WIN32_BOOL_FALSE(::TrySubmitThreadpoolCallback(
-        threadpoolWork,
-        pLambda.get(),
-        nullptr));
+    BOOL success = ::TrySubmitThreadpoolCallback(threadpoolWork, pLambda.get(), nullptr);
+    if (!success)
+    {
+        //throw 
+    }
 
-    // Threadpool thread owns this now
+    // Threadpool thread owns the lambda object now
     pLambda.release();
 }
 
