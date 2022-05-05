@@ -3,6 +3,8 @@ project(WCL VERSION 1.0)
 
 include(GNUInstallDirs)
 
+option(WCL_BUILD_TESTS "Sets option to build the unit tests, default on" ON)
+
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

@@ -1,7 +1,4 @@
 configure_file(WCLConfig.h.in WCLConfig.h)
-#target_include_directories(Tutorial PUBLIC
-#                           "${PROJECT_BINARY_DIR}"
-#                           )
 
 include(FetchContent)
 
@@ -23,7 +20,10 @@ add_subdirectory(io)
 add_subdirectory(security)
 add_subdirectory(text)
 add_subdirectory(threading)
-add_subdirectory(tests)
+
+if (${WCL_BUILD_TESTS})
+    add_subdirectory(tests)
+endif()
 
 # Add source to this project's executable.
 add_library(WCL STATIC 
