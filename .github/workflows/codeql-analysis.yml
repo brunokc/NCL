@@ -13,7 +13,7 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, codeanalysis ]
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
@@ -67,7 +67,10 @@ jobs:
     # - run: |
     #   echo "Run, Build Application using script"
     #   ./location_of_script_within_repo/buildscript.sh
-    - run: |
+    - name: Build
+      env:
+        BUILD_TYPE: Debug
+      run: |
         echo "Run, Build Application using script"
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
         cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
