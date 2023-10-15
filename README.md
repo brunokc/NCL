@@ -1,10 +1,11 @@
-# WCL - Windows Class Library
+# NCL - Native Class Library
 
-A C++ library aimed at making day-to-day tasks easier to do. The API is based
-the .NET Base Class Library (BCL) where it makes sense, while maintaining some
-well-known C++ standards, like the use of STL. For example, we use std::wstring
-instead of creating a new String class; we use std::vector<> instead of raw 
-arrays and use std::shared_ptr<> to allow sharing of object instances.
+NCL (pronounced "Nickel") is a C++ library aimed at making day-to-day tasks easier 
+to do. The API borrows the design from the .NET Base Class Library (BCL) where it 
+makes sense, while maintaining some well-known C++ standards, like the use of STL.
+For example, std::wstring are used instead of a new String class (although more
+helpers functions are provided); std::vector<> is used instead of raw arrays 
+and std::shared_ptr<> is used to allow sharing of object instances.
 
 ## Example 1
 
